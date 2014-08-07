@@ -26,6 +26,11 @@ namespace PitchAnnotator
     public partial class MainWindow : Window
     {
         /// <summary>
+        /// This list will contain all the lines added to the image
+        /// </summary>
+        List<Line> lines;
+
+        /// <summary>
         /// This GroupBox element surrounds the ListBox showing the layers on the image
         /// </summary>
         GroupBox layersListBox;
@@ -44,8 +49,6 @@ namespace PitchAnnotator
         /// This List shows the layers on the image
         /// </summary>
         ListView layersLists;
-
-        Image imageViewer;
 
         /// <summary>
         /// This is the constant width of the layers view section
@@ -87,13 +90,21 @@ namespace PitchAnnotator
         /// Set to 'true' when the previous zoom rect is saved.
         /// </summary>
         private bool prevZoomRectSet = false;
-        
+
+        /// <summary>
+        /// This is the location where user starts to draw a new line
+        /// </summary>
+        private Point initialMouseLoc;
+
+        /// <summary>
+        /// The line that user is currently drawing
+        /// </summary>
+        private Line currLine;
+
         public MainWindow()
         {
             InitializeComponent();
-            //MessageBox.Show(string.Format("{0}", zoomAndPanControl.Content));
-            //MessageBox.Show(string.Format("{0}", zoomAndPanControl.Content.Equals(theGrid)));
-            //MessageBox.Show(string.Format("{0}", theGrid.Children.IndexOf(canvas)));
+            lines = new List<Line>();
         }
 
         /// <summary>
@@ -126,6 +137,10 @@ namespace PitchAnnotator
             //helpTextWindow.Top = this.Top;
             //helpTextWindow.Owner = this;
             //helpTextWindow.Show();
+            BitmapImage im = new BitmapImage(new Uri(@"C:\Users\Erfan\Pictures\Screenshots\Screenshot (1).png"));
+            theGrid.Height = im.Height;
+            theGrid.Width = im.Width;
+            canvas.Background = new ImageBrush(im);
         }
 
         /// <summary>
@@ -140,7 +155,24 @@ namespace PitchAnnotator
             origZoomAndPanControlMouseDownPoint = e.GetPosition(zoomAndPanControl);
             origContentMouseDownPoint = e.GetPosition(canvas);
 
-            if ((Keyboard.Modifiers & ModifierKeys.Shift) != 0 &&
+            if ((Keyboard.Modifiers & ModifierKeys.Control) != 0 &&
+                e.ChangedButton == MouseButton.Left)
+            {
+                // Ctrl + left-down initiates line drawing mode
+                mouseHandlingMode = MouseHandlingMode.LineDrawing;
+                currLine = new Line()
+                {
+                    X1 = origContentMouseDownPoint.X,
+                    Y1 = origContentMouseDownPoint.Y,
+                    X2 = origContentMouseDownPoint.X,
+                    Y2 = origContentMouseDownPoint.Y,
+                    Stroke = Brushes.Red,
+                    StrokeThickness = 2
+                };
+                canvas.Children.Add(currLine);
+                
+            }
+            else if ((Keyboard.Modifiers & ModifierKeys.Shift) != 0 &&
                 (e.ChangedButton == MouseButton.Left ||
                  e.ChangedButton == MouseButton.Right))
             {
@@ -187,11 +219,20 @@ namespace PitchAnnotator
                     ApplyDragZoomRect();
                 }
 
+                else if (mouseHandlingMode == MouseHandlingMode.LineDrawing)
+                {
+                    // When line creation has finished, add the line to the lines list
+                    lines.Add(currLine);
+                    canvas.Children.Remove(currLine);
+                    updateLayersListView();
+                }
+
                 zoomAndPanControl.ReleaseMouseCapture();
                 mouseHandlingMode = MouseHandlingMode.None;
                 e.Handled = true;
             }
         }
+
 
         /// <summary>
         /// Event raised on mouse move in the ZoomAndPanControl.
@@ -244,6 +285,17 @@ namespace PitchAnnotator
 
                 e.Handled = true;
             }
+            else if(mouseHandlingMode == MouseHandlingMode.LineDrawing)
+            {
+                //
+                // When the user is drawing the line
+                //
+                Point curLoc = e.GetPosition(canvas);
+                currLine.X2 = curLoc.X;
+                currLine.Y2 = curLoc.Y;
+
+                e.Handled = true;
+            }
         }
 
         /// <summary>
@@ -257,7 +309,7 @@ namespace PitchAnnotator
             {
                 Point curContentMousePoint = e.GetPosition(canvas);
                 ZoomIn(curContentMousePoint);
-                
+
             }
             else if (e.Delta < 0)
             {
@@ -544,7 +596,9 @@ namespace PitchAnnotator
 
             e.Handled = true;
         }
-
+        /// <summary>
+        /// When the window size changes, update the layout for list views
+        /// </summary>
         private void Window_SizeChanged(object sender, SizeChangedEventArgs e)
         {
             if (this.IsLoaded)
@@ -553,6 +607,22 @@ namespace PitchAnnotator
                 imagesListBox.Height = h;
                 layersListBox.Height = h;
                 layersListBox.Margin = new Thickness(0, h, 0, 0);
+            }
+        }
+
+        /// <summary>
+        /// When a new line is added, a line is modified or deleted, this will be called to update the list view showing layers
+        /// </summary>
+        private void updateLayersListView()
+        {
+            layersLists.Items.Clear();
+            foreach (var line in lines)
+            {
+                if(!canvas.Children.Contains(line))
+                {
+                    canvas.Children.Add(line);
+                }
+                layersLists.Items.Add(new Label() { Content = string.Format("Line ({0},{1}) - ({2},{3})", line.X1, line.Y1, line.X2, line.Y2) });
             }
         }
     }
