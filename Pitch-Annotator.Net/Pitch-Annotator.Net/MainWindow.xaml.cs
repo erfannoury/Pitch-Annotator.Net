@@ -13,6 +13,8 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 using System.Windows.Media.Animation;
+using ZoomAndPan;
+
 
 namespace Pitch_Annotator.Net
 {
@@ -24,12 +26,9 @@ namespace Pitch_Annotator.Net
         // UI elements
         GroupBox layersListBox;
         GroupBox imagesListBox;
-        GroupBox mainBox;
-        ScrollViewer mainPane;
-        Canvas paneCanvas;
         ListView imagesList;
         ListView layersLists;
-        Image imViewer;
+        Image imageViewer;
         static private double listViewWidth = 300.0;
 
 
@@ -47,24 +46,13 @@ namespace Pitch_Annotator.Net
 
             /// Lists UI section
             createListsSectionUI();
+
         }
 
         private void createMainPaneUI()
         {
-            mainBox = new GroupBox() { Margin = new Thickness(0, 0, listViewWidth, 0), Header = "Image Pane" };
-            mainPane = new ScrollViewer() { Margin = new Thickness(0) };
-            mainBox.Content = mainPane;
-            mainGrid.Children.Add(mainBox);
-            mainPane.HorizontalScrollBarVisibility = ScrollBarVisibility.Auto;
             var image = new BitmapImage(new Uri(@"C:\Users\Erfan\Pictures\Screenshots\Screenshot (1).png"));
-            imViewer = new Image() { Source = image };
-            paneCanvas = new Canvas() { Width = image.Width, Height = image.Height };
-
-            
-            paneCanvas.Children.Add(imViewer);
-
-            //paneCanvas.MouseWheel += paneCanvas_MouseWheel;
-            mainPane.Content = paneCanvas;
+            imageViewer = new Image() { Source = image };
         }
         
         private void createListsSectionUI()
@@ -87,16 +75,16 @@ namespace Pitch_Annotator.Net
         //{
         //    Console.WriteLine("Delta = {0}", e.Delta);
         //    double zoom = e.Delta > 0 ? 1.1 : 0.9;
-        //    double height = imViewer.Height;
-        //    double width = imViewer.Width;
+        //    double height = imageViewer.Height;
+        //    double width = imageViewer.Width;
         //    height += zoom;
         //    width += zoom;
-        //    paneCanvas.LayoutTransform = new ScaleTransform(zoom, zoom);
-        //    //imViewer.LayoutTransform = new ScaleTransform(zoom, zoom);
-        //    paneCanvas.UpdateLayout(); 
+        //    content.LayoutTransform = new ScaleTransform(zoom, zoom);
+        //    //imageViewer.LayoutTransform = new ScaleTransform(zoom, zoom);
+        //    content.UpdateLayout(); 
 
-        //    Console.WriteLine("Canvas Width = {0}, Height = {1}", paneCanvas.Width, paneCanvas.Height);
-        //    Console.WriteLine("Image Width = {0}, Height = {1}", imViewer.ActualWidth, imViewer.ActualHeight);
+        //    Console.WriteLine("Canvas Width = {0}, Height = {1}", content.Width, content.Height);
+        //    Console.WriteLine("Image Width = {0}, Height = {1}", imageViewer.ActualWidth, imageViewer.ActualHeight);
         //}
 
         private void Window_SizeChanged(object sender, SizeChangedEventArgs e)

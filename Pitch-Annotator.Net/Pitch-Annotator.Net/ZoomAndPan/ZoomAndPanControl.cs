@@ -10,8 +10,6 @@ using System.Diagnostics;
 using System.Windows.Threading;
 using System.Windows.Controls.Primitives;
 
-/// This code added from: http://www.codeproject.com/Articles/85603/A-WPF-custom-control-for-zooming-and-panning
-
 namespace ZoomAndPan
 {
     /// <summary>

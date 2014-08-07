@@ -5,10 +5,6 @@ using System.Text;
 using System.Windows;
 using System.Windows.Media.Animation;
 
-
-/// This code added from: http://www.codeproject.com/Articles/85603/A-WPF-custom-control-for-zooming-and-panning
-
-
 namespace ZoomAndPan
 {
     /// <summary>
