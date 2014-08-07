@@ -39,5 +39,10 @@ namespace PitchAnnotator
         /// The user is holding down ctrl and left-mouse-button to draw a line
         /// </summary>
         LineDrawing,
+
+        /// <summary>
+        /// The user is dragging the lines with the mouse.
+        /// </summary>
+        DraggingLines,
     }
 }

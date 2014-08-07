@@ -26,6 +26,11 @@ namespace PitchAnnotator
     public partial class MainWindow : Window
     {
         /// <summary>
+        /// To be in the vicinity of the dragging endpoint, ratio of the mouse cursor distance to the desired line endpoint to the line length should be less than this constant
+        /// </summary>
+        private static double LineLengthRatio = 0.2;
+
+        /// <summary>
         /// This list will contain all the lines added to the image
         /// </summary>
         List<Line> lines;
@@ -167,8 +172,12 @@ namespace PitchAnnotator
                     X2 = origContentMouseDownPoint.X,
                     Y2 = origContentMouseDownPoint.Y,
                     Stroke = Brushes.Red,
-                    StrokeThickness = 2
+                    StrokeThickness = 2,
+                    Cursor = Cursors.Cross,
                 };
+                currLine.MouseDown += Line_MouseDown;
+                currLine.MouseUp += Line_MouseUp;
+                currLine.MouseMove += Line_MouseMove;
                 canvas.Children.Add(currLine);
                 
             }
@@ -192,6 +201,8 @@ namespace PitchAnnotator
                 e.Handled = true;
             }
         }
+
+        
 
         /// <summary>
         /// Event raised on mouse up in the ZoomAndPanControl.
@@ -597,6 +608,105 @@ namespace PitchAnnotator
             e.Handled = true;
         }
         /// <summary>
+        /// Event raised when mouse cursor is moving over a Line.
+        /// </summary>
+        void Line_MouseMove(object sender, MouseEventArgs e)
+        {
+            if(mouseHandlingMode != MouseHandlingMode.DraggingLines)
+            {
+                return;
+            }
+
+            Point curContentPoint = e.GetPosition(canvas);
+            Line line = (Line)sender;
+
+            // calculate length of the line
+            double length = Math.Sqrt((line.X1 - line.X2) * (line.X1 - line.X2) + (line.Y1 - line.Y2) * (line.Y1 - line.Y2));
+
+            // calculate cursor distance to first endpoint of the line
+            double dist1 = Math.Sqrt((line.X1 - curContentPoint.X) * (line.X1 - curContentPoint.X) + (line.Y1 - curContentPoint.Y) * (line.Y1 - curContentPoint.Y));
+            // calculate cursor distance to second encpoint of the line
+            double dist2 = Math.Sqrt((line.X2 - curContentPoint.X) * (line.X2 - curContentPoint.X) + (line.Y2 - curContentPoint.Y) * (line.Y2 - curContentPoint.Y));
+
+            // mouse cursor is close enough to the first endpoint, so first endpoint will be translated
+            if(dist1/length <= LineLengthRatio)
+            {
+                line.X1 = curContentPoint.X;
+                line.Y1 = curContentPoint.Y;
+            }
+            // mouse cursor is close enough to the second endpoint, so second endpoint will be translated
+            else if(dist2/length <= LineLengthRatio)
+            {
+                line.X2 = curContentPoint.X;
+                line.Y2 = curContentPoint.Y;
+            }
+            else
+            {
+                // do nothing
+                // TODO: maybe you can drag the line in this case. This feature might be added in future
+            }
+        }
+
+        /// <summary>
+        /// Event raised when mouse cursor is released over a Line.
+        /// </summary>
+        void Line_MouseUp(object sender, MouseButtonEventArgs e)
+        {
+            if (mouseHandlingMode != MouseHandlingMode.DraggingLines)
+                return;
+
+            lines.Add(currLine);
+            currLine.ReleaseMouseCapture();
+            mouseHandlingMode = MouseHandlingMode.None;
+
+            canvas.Children.Remove(currLine);
+            updateLayersListView();
+
+
+
+            e.Handled = true;
+        }
+
+        /// <summary>
+        /// Event raised when mouse cursor is clicked down when over a Line.
+        /// </summary>
+        void Line_MouseDown(object sender, MouseButtonEventArgs e)
+        {
+            canvas.Focus();
+            Keyboard.Focus(canvas);
+
+            if ((Keyboard.Modifiers & ModifierKeys.Shift) != 0)
+            {
+                //
+                // When the shift key is held down special zooming logic is executed in content_MouseDown,
+                // so don't handle mouse input here.
+                //
+                return;
+            }
+
+            if (mouseHandlingMode != MouseHandlingMode.None)
+            {
+                //
+                // We are in some other mouse handling mode, don't do anything.
+                return;
+            }
+
+            mouseHandlingMode = MouseHandlingMode.DraggingLines;
+            origContentMouseDownPoint = e.GetPosition(canvas);
+
+            // Copy the old line, then remove it, work with the temporary line and then add it to the list
+            Line line = (Line)sender;
+            currLine = line;
+            lines.Remove(line);
+            canvas.Children.Remove(line);
+            canvas.Children.Add(currLine);
+            currLine.CaptureMouse();
+
+            e.Handled = true;
+        }
+
+
+        /// <summary>
         /// When the window size changes, update the layout for list views
         /// </summary>
         private void Window_SizeChanged(object sender, SizeChangedEventArgs e)
@@ -622,7 +732,12 @@ namespace PitchAnnotator
                 {
                     canvas.Children.Add(line);
                 }
-                layersLists.Items.Add(new Label() { Content = string.Format("Line ({0},{1}) - ({2},{3})", line.X1, line.Y1, line.X2, line.Y2) });
+                layersLists.Items.Add(new Label()
+                {
+                    Content = string.Format("Line ({0},{1}) - ({2},{3})",
+                        line.X1.ToString("F3"), line.Y1.ToString("F3"),
+                        line.X2.ToString("F3"), line.Y2.ToString("F3"))
+                });
             }
         }
     }
