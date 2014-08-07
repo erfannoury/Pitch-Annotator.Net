@@ -49,7 +49,14 @@
 			Key="Backspace"
 			Command="{StaticResource Commands.JumpBackToPrevZoom}"
 			/>
-		
+		<KeyBinding
+			Key="F"
+			Command="{StaticResource Commands.Fill}"
+			/>
+		<KeyBinding
+			Key="P"
+			Command="{StaticResource Commands.OneHundredPercent}"
+			/>
 	</Window.InputBindings>
 	
 	<Window.CommandBindings>
