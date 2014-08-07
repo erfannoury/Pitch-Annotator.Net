@@ -179,7 +179,8 @@ namespace PitchAnnotator
                 currLine.MouseUp += Line_MouseUp;
                 currLine.MouseMove += Line_MouseMove;
                 canvas.Children.Add(currLine);
-                
+                updateStatusBarLocationLabels(currLine.X1, currLine.Y1, currLine.X2, currLine.Y2);
+
             }
             else if ((Keyboard.Modifiers & ModifierKeys.Shift) != 0 &&
                 (e.ChangedButton == MouseButton.Left ||
@@ -201,8 +202,6 @@ namespace PitchAnnotator
                 e.Handled = true;
             }
         }
-
-        
 
         /// <summary>
         /// Event raised on mouse up in the ZoomAndPanControl.
@@ -236,6 +235,7 @@ namespace PitchAnnotator
                     lines.Add(currLine);
                     canvas.Children.Remove(currLine);
                     updateLayersListView();
+                    clearStatusBarLocationLabels();
                 }
 
                 zoomAndPanControl.ReleaseMouseCapture();
@@ -296,7 +296,7 @@ namespace PitchAnnotator
 
                 e.Handled = true;
             }
-            else if(mouseHandlingMode == MouseHandlingMode.LineDrawing)
+            else if (mouseHandlingMode == MouseHandlingMode.LineDrawing)
             {
                 //
                 // When the user is drawing the line
@@ -304,6 +304,7 @@ namespace PitchAnnotator
                 Point curLoc = e.GetPosition(canvas);
                 currLine.X2 = curLoc.X;
                 currLine.Y2 = curLoc.Y;
+                updateStatusBarLocationLabels(currLine.X1, currLine.Y1, currLine.X2, currLine.Y2);
 
                 e.Handled = true;
             }
@@ -612,7 +613,7 @@ namespace PitchAnnotator
         /// </summary>
         void Line_MouseMove(object sender, MouseEventArgs e)
         {
-            if(mouseHandlingMode != MouseHandlingMode.DraggingLines)
+            if (mouseHandlingMode != MouseHandlingMode.DraggingLines)
             {
                 return;
             }
@@ -629,13 +630,13 @@ namespace PitchAnnotator
             double dist2 = Math.Sqrt((line.X2 - curContentPoint.X) * (line.X2 - curContentPoint.X) + (line.Y2 - curContentPoint.Y) * (line.Y2 - curContentPoint.Y));
 
             // mouse cursor is close enough to the first endpoint, so first endpoint will be translated
-            if(dist1/length <= LineLengthRatio)
+            if (dist1 / length <= LineLengthRatio)
             {
                 line.X1 = curContentPoint.X;
                 line.Y1 = curContentPoint.Y;
             }
             // mouse cursor is close enough to the second endpoint, so second endpoint will be translated
-            else if(dist2/length <= LineLengthRatio)
+            else if (dist2 / length <= LineLengthRatio)
             {
                 line.X2 = curContentPoint.X;
                 line.Y2 = curContentPoint.Y;
@@ -645,6 +646,8 @@ namespace PitchAnnotator
                 // do nothing
                 // TODO: maybe you can drag the line in this case. This feature might be added in future
             }
+
+            updateStatusBarLocationLabels(line.X1, line.Y1, line.X2, line.Y2);
         }
 
         /// <summary>
@@ -662,7 +665,7 @@ namespace PitchAnnotator
             canvas.Children.Remove(currLine);
             updateLayersListView();
 
-
+            clearStatusBarLocationLabels();
 
             e.Handled = true;
         }
@@ -721,6 +724,24 @@ namespace PitchAnnotator
         }
 
         /// <summary>
+        /// This will update the labels showing endpoint locations in the statis bar
+        /// </summary>
+        private void updateStatusBarLocationLabels(double x1, double y1, double x2, double y2)
+        {
+            firstPointLbl.Content = string.Format("From ({0}, {1})", x1.ToString("F3"), y1.ToString("F3"));
+            secondPointLbl.Content = string.Format("To ({0}, {1})", x2.ToString("F3"), y2.ToString("F3"));
+        }
+
+        /// <summary>
+        /// This will clear the content of the location labels in the status bar
+        /// </summary>
+        private void clearStatusBarLocationLabels()
+        {
+            firstPointLbl.Content = "";
+            secondPointLbl.Content = "";
+        }
+
+        /// <summary>
         /// When a new line is added, a line is modified or deleted, this will be called to update the list view showing layers
         /// </summary>
         private void updateLayersListView()
@@ -728,7 +749,7 @@ namespace PitchAnnotator
             layersLists.Items.Clear();
             foreach (var line in lines)
             {
-                if(!canvas.Children.Contains(line))
+                if (!canvas.Children.Contains(line))
                 {
                     canvas.Children.Add(line);
                 }

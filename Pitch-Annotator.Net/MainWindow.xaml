@@ -14,7 +14,7 @@
 	FocusManager.FocusedElement="{Binding ElementName=scroller}"
 	>
 	<Window.Resources>
-		
+
 		<!-- UI commands. -->
 		<RoutedUICommand x:Key="Commands.ZoomOut" />
 		<RoutedUICommand x:Key="Commands.ZoomIn" />
@@ -29,11 +29,11 @@
 		<local:ScaleToPercentConverter 
 			x:Key="scaleToPercentConverter" 
 			/>
-		
+
 	</Window.Resources>
-	
+
 	<Window.InputBindings>
-		
+
 		<!--
 		Bind keys to commands.
 		-->
@@ -58,7 +58,7 @@
 			Command="{StaticResource Commands.OneHundredPercent}"
 			/>
 	</Window.InputBindings>
-	
+
 	<Window.CommandBindings>
 
 		<!--
@@ -89,7 +89,7 @@
 	</Window.CommandBindings>
 
 	<Grid>
-		
+
 		<!-- 
 		Grid placed below the zoom and pan control that contains the zoom slider, zoom label and
 		some button.
@@ -102,7 +102,9 @@
 			Background="WhiteSmoke"
 			>
 			<Grid.ColumnDefinitions>
-				<ColumnDefinition Width="*" />
+				<ColumnDefinition Width="150" />
+				<ColumnDefinition Width="150"/>
+				<ColumnDefinition Width="*"/>
 				<!-- empty space -->
 				<ColumnDefinition Width="40" />
 				<!-- the fill button -->
@@ -135,11 +137,21 @@
 				<!-- spacer -->
 			</Grid.ColumnDefinitions>
 
+			<!-- This label will show information about the location of the first endpoint of the current line -->
+			<Label
+				Grid.Column="0"
+				Name="firstPointLbl"/>
+
+			<!-- This label will show information about the location of the second endpoint of the current line -->
+			<Label
+				Grid.Column="1"
+				Name="secondPointLbl"/>
+
 			<!-- 
 			The fill button.  Causes the content to be scaled so that it fits in the viewport.
 			-->
 			<Button
-				Grid.Column="1"
+				Grid.Column="3"
 				Command="{StaticResource Commands.Fill}"
 				>
 				Fill
@@ -148,7 +160,7 @@
 			The 100% button.  Causes the content to be scaled to 100 percent.
 			-->
 			<Button
-				Grid.Column="3"
+				Grid.Column="5"
 				Command="{StaticResource Commands.OneHundredPercent}"
 				>
 				100%
@@ -159,21 +171,21 @@
 			is while zooming in and out.
 			-->
 			<TextBlock
-				Grid.Column="5"
+				Grid.Column="7"
 				VerticalAlignment="Center"
 				HorizontalAlignment="Right"
-				Text="{Binding ElementName=zoomAndPanControl, Path=ContentScale, Converter={StaticResource scaleToPercentConverter}}"
+				Text="{Binding ElementName=zoomAndPanControl, Path=ContentScale, Converter={StaticResource scaleToPercentConverter}}" Grid.ColumnSpan="2" Margin="0,10,14,9"
 				/>
 
 			<TextBlock
-				Grid.Column="6"
+				Grid.Column="8"
 				VerticalAlignment="Center"
-				Text="%"
+				Text="%" Margin="0,10,0,9"
 				/>
 
 			<!-- Button to zoom out. -->
 			<Button
-				Grid.Column="8"
+				Grid.Column="10"
 				Command="{StaticResource Commands.ZoomOut}"
 				>
 				-
@@ -181,7 +193,7 @@
 
 			<!-- Slider to change the current zoom level. -->
 			<Slider
-				Grid.Column="10"
+				Grid.Column="12"
 				Minimum="10" 
 				LargeChange="20" 
 				TickFrequency="10" 
@@ -195,7 +207,7 @@
 			Button to zoom in.
 			-->
 			<Button
-				Grid.Column="12"
+				Grid.Column="14"
 				Command="{StaticResource Commands.ZoomIn}"
 				>
 				+
@@ -203,7 +215,7 @@
 
 			<!-- Stick a resize grip in the bottom right corner of the window. -->
 			<ResizeGrip
-				Grid.Column="14"
+				Grid.Column="16"
 				/>
 
 		</Grid>
