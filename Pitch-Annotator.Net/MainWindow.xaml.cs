@@ -16,6 +16,7 @@ using System.Diagnostics;
 using ZoomAndPan;
 using System.Windows.Media.Animation;
 using System.Windows.Threading;
+using System.IO;
 
 namespace PitchAnnotator
 {
@@ -25,6 +26,26 @@ namespace PitchAnnotator
     /// </summary>
     public partial class MainWindow : Window
     {
+        /// <summary>
+        /// This lists all the valid image extensions
+        /// </summary>
+        public static string[] ValidImageExtensions = new[] { ".jpeg", ".jpg", ".png" };
+
+        /// <summary>
+        /// This list contains all the image entries; all the images in the images folder and information about their respective annotation files
+        /// </summary>
+        List<ImageEntry> imageEntries;
+
+        /// <summary>
+        /// This is the address of the folder which contains all the image files that are going to be annotated.
+        /// </summary>
+        string ImagesFolderAddress { get; set; }
+
+        /// <summary>
+        /// This is the address of the folder which contains/will contain annotation files for images that are going to be annotated.
+        /// </summary>
+        string AnnotationFolderAddress { get; set; }
+
         /// <summary>
         /// To be in the vicinity of the dragging endpoint, ratio of the mouse cursor distance to the desired line endpoint to the line length should be less than this constant
         /// </summary>
@@ -106,29 +127,24 @@ namespace PitchAnnotator
         /// </summary>
         private Line currLine;
 
+        /// <summary>
+        /// This is the constructor for the Main window of the appliation
+        /// </summary>
+        /// <param name="imFolder"> This is the address to the folder which contains all the images that are going to be annotated.</param>
+        /// <param name="gtFolder"> This is the address to the folder which contains/will contain all the annotation data of the image files located in imFolder.</param>
+        //public MainWindow(string imFolder, string gtFolder)
         public MainWindow()
         {
             InitializeComponent();
             lines = new List<Line>();
-        }
+            imageEntries = new List<ImageEntry>();
 
-        /// <summary>
-        /// This creates the lists section UI and adds the ui elements into the window
-        /// </summary>
-        private void createListsSectionUI()
-        {
-            var h = mainGrid.ActualHeight / 2;
+            /// TEST
+            ImagesFolderAddress = @"E:\Code Vault\Github\Pitch-Annotator.Net\dataset\images\test";
+            AnnotationFolderAddress = @"E:\Code Vault\Github\Pitch-Annotator.Net\dataset\groundTruth\test";
+            /// TEST
 
-            imagesListBox = new GroupBox() { Width = listViewWidth, Height = h, Margin = new Thickness(0), HorizontalAlignment = System.Windows.HorizontalAlignment.Right, Header = "Images", VerticalAlignment = System.Windows.VerticalAlignment.Top };
-            imagesList = new ListView();
-            imagesListBox.Content = imagesList;
-            mainGrid.Children.Add(imagesListBox);
-
-
-            layersListBox = new GroupBox() { Width = listViewWidth, Height = h, Margin = new Thickness(0, h, 0, 0), HorizontalAlignment = System.Windows.HorizontalAlignment.Right, Header = "Layers", VerticalAlignment = System.Windows.VerticalAlignment.Top };
-            layersLists = new ListView();
-            layersListBox.Content = layersLists;
-            mainGrid.Children.Add(layersListBox);
+            PopulateImageEntries();
         }
 
         /// <summary>
@@ -146,6 +162,30 @@ namespace PitchAnnotator
             theGrid.Height = im.Height;
             theGrid.Width = im.Width;
             canvas.Background = new ImageBrush(im);
+
+            UpdateImageListViewer();
+
+
+
+        }
+
+        /// <summary>
+        /// This creates the lists section UI and adds the ui elements into the window
+        /// </summary>
+        private void createListsSectionUI()
+        {
+            var h = mainGrid.ActualHeight / 2;
+
+            imagesListBox = new GroupBox() { Width = listViewWidth, Height = h, Margin = new Thickness(0), HorizontalAlignment = System.Windows.HorizontalAlignment.Right, Header = "Images", VerticalAlignment = System.Windows.VerticalAlignment.Top };
+            imagesList = new ListView() { SelectionMode = SelectionMode.Single };
+            imagesListBox.Content = imagesList;
+            mainGrid.Children.Add(imagesListBox);
+
+
+            layersListBox = new GroupBox() { Width = listViewWidth, Height = h, Margin = new Thickness(0, h, 0, 0), HorizontalAlignment = System.Windows.HorizontalAlignment.Right, Header = "Layers", VerticalAlignment = System.Windows.VerticalAlignment.Top };
+            layersLists = new ListView() { SelectionMode = SelectionMode.Single };
+            layersListBox.Content = layersLists;
+            mainGrid.Children.Add(layersListBox);
         }
 
         /// <summary>
@@ -739,6 +779,31 @@ namespace PitchAnnotator
         {
             firstPointLbl.Content = "";
             secondPointLbl.Content = "";
+        }
+
+        /// <summary>
+        /// This will locate all the image files in the specified folder and try to find their respective annotation files
+        /// </summary>
+        private void PopulateImageEntries()
+        {
+            foreach(var file in Directory.EnumerateFiles(ImagesFolderAddress, "*", SearchOption.AllDirectories))
+            {
+                if(ValidImageExtensions.Contains(System.IO.Path.GetExtension(file)))
+                    imageEntries.Add(new ImageEntry(file, AnnotationFolderAddress));
+            }
+        }
+
+        /// <summary>
+        /// This will update the images listviewer to take into account the latest changes or at the beginning of openning the application
+        /// </summary>
+        private void UpdateImageListViewer()
+        {
+            imagesList.Items.Clear();
+            imageEntries.Sort();
+            foreach(var ent in imageEntries)
+            {
+                imagesList.Items.Add(ent.GetListViewItem());
+            }
         }
 
         /// <summary>
