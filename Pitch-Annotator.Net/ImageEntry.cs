@@ -7,6 +7,8 @@ using System.IO;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
 using System.Windows.Media;
+using Newtonsoft.Json;
+
 namespace PitchAnnotator
 {
     /// <summary>

@@ -17,6 +17,7 @@ using ZoomAndPan;
 using System.Windows.Media.Animation;
 using System.Windows.Threading;
 using System.IO;
+using Newtonsoft.Json;
 
 namespace PitchAnnotator
 {
