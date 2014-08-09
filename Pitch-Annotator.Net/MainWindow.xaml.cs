@@ -17,7 +17,7 @@ using ZoomAndPan;
 using System.Windows.Media.Animation;
 using System.Windows.Threading;
 using System.IO;
-using Newtonsoft.Json;
+using CsvHelper;
 
 namespace PitchAnnotator
 {
@@ -27,6 +27,21 @@ namespace PitchAnnotator
     /// </summary>
     public partial class MainWindow : Window
     {
+        /// <summary>
+        /// This is a reference to the last selected image item from the imagesList ListView
+        /// </summary>
+        object LastSelectedImageItem;
+
+        /// <summary>
+        /// This shows the current image entry that user is working on or null if application has just started and no image is selected yet.
+        /// </summary>
+        private ImageEntry CurrentImageEntry;
+
+        /// <summary>
+        /// Indicates whether an image is currently being displayed or not.
+        /// </summary>
+        private bool IsImagePresent;
+
         /// <summary>
         /// This lists all the valid image extensions
         /// </summary>
@@ -139,6 +154,8 @@ namespace PitchAnnotator
             InitializeComponent();
             lines = new List<Line>();
             imageEntries = new List<ImageEntry>();
+            IsImagePresent = false;
+            CurrentImageEntry = null;
 
             /// TEST
             ImagesFolderAddress = @"E:\Code Vault\Github\Pitch-Annotator.Net\dataset\images\test";
@@ -159,15 +176,7 @@ namespace PitchAnnotator
             //helpTextWindow.Top = this.Top;
             //helpTextWindow.Owner = this;
             //helpTextWindow.Show();
-            BitmapImage im = new BitmapImage(new Uri(@"C:\Users\Erfan\Pictures\Screenshots\Screenshot (1).png"));
-            theGrid.Height = im.Height;
-            theGrid.Width = im.Width;
-            canvas.Background = new ImageBrush(im);
-
             UpdateImageListViewer();
-
-
-
         }
 
         /// <summary>
@@ -180,6 +189,7 @@ namespace PitchAnnotator
             imagesListBox = new GroupBox() { Width = listViewWidth, Height = h, Margin = new Thickness(0), HorizontalAlignment = System.Windows.HorizontalAlignment.Right, Header = "Images", VerticalAlignment = System.Windows.VerticalAlignment.Top };
             imagesList = new ListView() { SelectionMode = SelectionMode.Single };
             imagesListBox.Content = imagesList;
+            imagesList.SelectionChanged += imagesList_SelectionChanged;
             mainGrid.Children.Add(imagesListBox);
 
 
@@ -787,6 +797,7 @@ namespace PitchAnnotator
         /// </summary>
         private void PopulateImageEntries()
         {
+            imageEntries.Clear();
             foreach(var file in Directory.EnumerateFiles(ImagesFolderAddress, "*", SearchOption.AllDirectories))
             {
                 if(ValidImageExtensions.Contains(System.IO.Path.GetExtension(file)))
@@ -800,11 +811,115 @@ namespace PitchAnnotator
         private void UpdateImageListViewer()
         {
             imagesList.Items.Clear();
+            PopulateImageEntries();
             imageEntries.Sort();
             foreach(var ent in imageEntries)
             {
                 imagesList.Items.Add(ent.GetListViewItem());
             }
+        }
+
+        /// <summary>
+        /// Event raised when selection of the images list view changes
+        /// </summary>
+        void imagesList_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            bool saved = SaveCurrentImageOutput();
+            string imName;
+            if(imagesList.SelectedItem != null)
+            {
+                imName = (string)((Label)(((Grid)imagesList.SelectedItem).Children[0])).Content;
+                CurrentImageEntry = imageEntries.Find(a => a.ImageName == imName);
+                DisplayNewImage();
+                DisplayNewAnnotation();
+            }
+            if(LastSelectedImageItem != null)
+            {
+                var g = (Grid)LastSelectedImageItem;
+                g.Background = saved ? Brushes.LightGreen : Brushes.PaleVioletRed;
+
+            }
+            LastSelectedImageItem = imagesList.SelectedItem;
+            //UpdateImageListViewer();
+
+        }
+
+        private void DisplayNewImage()
+        {
+            this.IsImagePresent = true;
+            //if(this.IsImagePresent)
+            {
+                BitmapImage im = new BitmapImage(new Uri(CurrentImageEntry.ImageAddress));
+                this.theGrid.Height = im.Height;
+                this.theGrid.Width = im.Width;
+                canvas.Background = new ImageBrush(im);
+            }
+
+        }
+
+        /// <summary>
+        /// When a new image is selected, lines displayed on the canvas will be deleted and new lines from the currently selected image's annotation file will be displayed
+        /// </summary>
+        private void DisplayNewAnnotation()
+        {
+            // First delete all the lines displayed on the canvas
+            canvas.Children.Clear();
+            // then clear the lines List containing all the annotated lines
+            lines.Clear();
+
+            // if the currently selected image already has annotation file, add all the lines to the proper lists
+            if(CurrentImageEntry.HasAnnotation)
+            {
+                using (var streamreader = new StreamReader(CurrentImageEntry.AnnotationAddress))
+                {
+                    CsvReader csv = new CsvReader(streamreader, new CsvHelper.Configuration.CsvConfiguration() { HasHeaderRecord = false });
+                    while(csv.Read())
+                    {
+                        var line = new Line()
+                        {
+                            X1 = csv.GetField<float>(0),
+                            X2 = csv.GetField<float>(1),
+                            Y1 = csv.GetField<float>(2),
+                            Y2 = csv.GetField<float>(3),
+                            Stroke = Brushes.Red,
+                            StrokeThickness = 2,
+                            Cursor = Cursors.Cross,
+                        };
+                        line.MouseDown += Line_MouseDown;
+                        line.MouseUp += Line_MouseUp;
+                        line.MouseMove += Line_MouseMove;
+                        lines.Add(line);
+                        canvas.Children.Add(line);
+                    }
+                }
+            }
+            updateLayersListView();
+        }
+
+        /// <summary>
+        /// This will save the output for the current image entry that user was working on
+        /// </summary>
+        private bool SaveCurrentImageOutput()
+        {
+            if (CurrentImageEntry == null)
+                return false;
+            var outpath = CurrentImageEntry.AnnotationAddress;
+            using (var streamwriter = new StreamWriter(CurrentImageEntry.AnnotationAddress, false))
+            {
+                var csvwriter = new CsvWriter(streamwriter);
+                foreach (var line in lines)
+                {
+                    csvwriter.WriteField<double>(line.X1);
+                    csvwriter.WriteField<double>(line.X2);
+                    csvwriter.WriteField<double>(line.Y1);
+                    csvwriter.WriteField<double>(line.Y2);
+                    csvwriter.NextRecord();
+                }
+            }
+            if (lines.Count == 0)
+                return false;
+
+            return true;
         }
 
         /// <summary>
@@ -819,12 +934,29 @@ namespace PitchAnnotator
                 {
                     canvas.Children.Add(line);
                 }
-                layersLists.Items.Add(new Label()
+                layersLists.Items.Add(new LineListItem()
                 {
                     Content = string.Format("Line ({0},{1}) - ({2},{3})",
                         line.X1.ToString("F3"), line.Y1.ToString("F3"),
-                        line.X2.ToString("F3"), line.Y2.ToString("F3"))
+                        line.X2.ToString("F3"), line.Y2.ToString("F3")),
+                        LineReference = line
                 });
+            }
+        }
+
+        /// <summary>
+        /// This is executed when a layer in line layers list is being deleted
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void DeleteLineLayer_Executed(object sender, ExecutedRoutedEventArgs e)
+        {
+            if(layersLists.SelectedItem != null)
+            {
+                var item = layersLists.SelectedItem as LineListItem;
+                canvas.Children.Remove(item.LineReference);
+                lines.Remove(item.LineReference);
+                layersLists.Items.Remove(item);
             }
         }
     }
