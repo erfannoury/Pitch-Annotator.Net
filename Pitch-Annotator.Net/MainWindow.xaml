@@ -13,187 +13,205 @@
 	MinWidth="800"
 	FocusManager.FocusedElement="{Binding ElementName=scroller}"
 	>
-	<Window.Resources>
+    <Window.Resources>
 
-		<!-- UI commands. -->
-		<RoutedUICommand x:Key="Commands.ZoomOut" />
-		<RoutedUICommand x:Key="Commands.ZoomIn" />
-		<RoutedUICommand x:Key="Commands.JumpBackToPrevZoom" />
-		<RoutedUICommand x:Key="Commands.Fill" />
-		<RoutedUICommand x:Key="Commands.OneHundredPercent" />
+        <!-- UI commands. -->
+        <RoutedUICommand x:Key="Commands.ZoomOut" />
+        <RoutedUICommand x:Key="Commands.ZoomIn" />
+        <RoutedUICommand x:Key="Commands.JumpBackToPrevZoom" />
+        <RoutedUICommand x:Key="Commands.Fill" />
+        <RoutedUICommand x:Key="Commands.OneHundredPercent" />
+        <RoutedUICommand x:Key="Commands.DeleteLineLayer" />
 
-		<!-- 
+        <!-- 
 		This converts from a scale value to a percentage value.
 		It is used to convert the value of 'ContentScale' to the percentage zoom level that is displayed in the UI.
 		-->
-		<local:ScaleToPercentConverter 
+        <local:ScaleToPercentConverter 
 			x:Key="scaleToPercentConverter" 
 			/>
 
-	</Window.Resources>
+    </Window.Resources>
 
-	<Window.InputBindings>
+    <Window.InputBindings>
 
-		<!--
+        <!--
 		Bind keys to commands.
 		-->
-		<KeyBinding
+        <KeyBinding
 			Key="Minus"
 			Command="{StaticResource Commands.ZoomOut}"
 			/>
-		<KeyBinding
+        <KeyBinding
 			Key="Plus"
 			Command="{StaticResource Commands.ZoomIn}"
 			/>
-		<KeyBinding
+        <KeyBinding
 			Key="Backspace"
 			Command="{StaticResource Commands.JumpBackToPrevZoom}"
 			/>
-		<KeyBinding
+        <KeyBinding
 			Key="F"
 			Command="{StaticResource Commands.Fill}"
 			/>
-		<KeyBinding
+        <KeyBinding
 			Key="P"
 			Command="{StaticResource Commands.OneHundredPercent}"
 			/>
-	</Window.InputBindings>
+        <KeyBinding
+            Key="D"
+            Command="{StaticResource Commands.DeleteLineLayer}"
+            />
+    </Window.InputBindings>
 
-	<Window.CommandBindings>
+    <Window.CommandBindings>
 
-		<!--
+        <!--
 		Bind commands to event handlers.
 		-->
-		<CommandBinding 
+        <CommandBinding 
 			Command="{StaticResource Commands.ZoomOut}" 
 			Executed="ZoomOut_Executed" 
 			/>
-		<CommandBinding 
+        <CommandBinding 
 			Command="{StaticResource Commands.ZoomIn}" 
 			Executed="ZoomIn_Executed" 
 			/>
-		<CommandBinding 
+        <CommandBinding 
 			Command="{StaticResource Commands.JumpBackToPrevZoom}" 
 			CanExecute="JumpBackToPrevZoom_CanExecuted"
 			Executed="JumpBackToPrevZoom_Executed" 
 			/>
-		<CommandBinding 
+        <CommandBinding 
 			Command="{StaticResource Commands.Fill}" 
 			Executed="Fill_Executed" 
 			/>
-		<CommandBinding 
+        <CommandBinding 
 			Command="{StaticResource Commands.OneHundredPercent}" 
 			Executed="OneHundredPercent_Executed" 
 			/>
+        <CommandBinding
+            Command="{StaticResource Commands.DeleteLineLayer}"
+            Executed="DeleteLineLayer_Executed"
+            />
 
-	</Window.CommandBindings>
+    </Window.CommandBindings>
 
-	<Grid>
+    <Grid>
 
-		<!-- 
+        <!-- 
 		Grid placed below the zoom and pan control that contains the zoom slider, zoom label and
 		some button.
 		-->
-		<Grid
+        <Grid
 			Name="statBar" 
 			Height="35" 
 			Margin="0,0,0,0" 
 			VerticalAlignment="Bottom" 
 			Background="WhiteSmoke"
 			>
-			<Grid.ColumnDefinitions>
-				<ColumnDefinition Width="150" />
-				<ColumnDefinition Width="150"/>
-				<ColumnDefinition Width="*"/>
-				<!-- empty space -->
-				<ColumnDefinition Width="40" />
-				<!-- the fill button -->
-				<ColumnDefinition Width="5" />
-				<!-- spacer -->
-				<ColumnDefinition Width="40" />
-				<!-- the 100% button -->
-				<ColumnDefinition Width="5" />
-				<!-- spacer -->
-				<ColumnDefinition Width="25" />
-				<!-- the zoom percentage label -->
-				<ColumnDefinition Width="15" />
-				<!-- the % symbol -->
-				<ColumnDefinition Width="5" />
-				<!-- spacer -->
-				<ColumnDefinition Width="20" />
-				<!-- the zoom out button -->
-				<ColumnDefinition Width="5" />
-				<!-- spacer -->
-				<ColumnDefinition Width="120" />
-				<!-- the zoom slider -->
-				<ColumnDefinition Width="5" />
-				<!-- spacer -->
-				<ColumnDefinition Width="20" />
-				<!-- the zoom in button -->
-				<ColumnDefinition Width="10" />
-				<!-- spacer -->
-				<ColumnDefinition Width="Auto" />
-				<!-- resize grip -->
-				<!-- spacer -->
-			</Grid.ColumnDefinitions>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="150" />
+                <ColumnDefinition Width="150"/>
+                <ColumnDefinition Width="308*"/>
+                <ColumnDefinition Width="80"/>
+                <!-- delete layer button-->
+                <ColumnDefinition Width="5"/>
+                <!-- empty space -->
+                <ColumnDefinition Width="40" />
+                <!-- the fill button -->
+                <ColumnDefinition Width="5" />
+                <!-- spacer -->
+                <ColumnDefinition Width="40" />
+                <!-- the 100% button -->
+                <ColumnDefinition Width="5" />
+                <!-- spacer -->
+                <ColumnDefinition Width="25" />
+                <!-- the zoom percentage label -->
+                <ColumnDefinition Width="15" />
+                <!-- the % symbol -->
+                <ColumnDefinition Width="5" />
+                <!-- spacer -->
+                <ColumnDefinition Width="20" />
+                <!-- the zoom out button -->
+                <ColumnDefinition Width="5" />
+                <!-- spacer -->
+                <ColumnDefinition Width="120" />
+                <!-- the zoom slider -->
+                <ColumnDefinition Width="5" />
+                <!-- spacer -->
+                <ColumnDefinition Width="20" />
+                <!-- the zoom in button -->
+                <ColumnDefinition Width="10" />
+                <!-- spacer -->
+                <ColumnDefinition Width="Auto" />
+                <!-- resize grip -->
+                <!-- spacer -->
+            </Grid.ColumnDefinitions>
 
-			<!-- This label will show information about the location of the first endpoint of the current line -->
-			<Label
+            <!-- This label will show information about the location of the first endpoint of the current line -->
+            <Label
 				Grid.Column="0"
 				Name="firstPointLbl"/>
 
-			<!-- This label will show information about the location of the second endpoint of the current line -->
-			<Label
+            <!-- This label will show information about the location of the second endpoint of the current line -->
+            <Label
 				Grid.Column="1"
 				Name="secondPointLbl"/>
+            <Button
+                Grid.Column="3"
+                Command="{StaticResource Commands.DeleteLineLayer}"
+                >
+                Delete Layer
+            </Button>
 
-			<!-- 
+            <!-- 
 			The fill button.  Causes the content to be scaled so that it fits in the viewport.
 			-->
-			<Button
-				Grid.Column="3"
+            <Button
+				Grid.Column="5"
 				Command="{StaticResource Commands.Fill}"
 				>
-				Fill
-			</Button>
-			<!-- 
+                Fill
+            </Button>
+            <!-- 
 			The 100% button.  Causes the content to be scaled to 100 percent.
 			-->
-			<Button
-				Grid.Column="5"
+            <Button
+				Grid.Column="7"
 				Command="{StaticResource Commands.OneHundredPercent}"
 				>
-				100%
-			</Button>
+                100%
+            </Button>
 
-			<!--
+            <!--
 			This is the label that shows what the current zoom level
 			is while zooming in and out.
 			-->
-			<TextBlock
-				Grid.Column="7"
+            <TextBlock
+				Grid.Column="9"
 				VerticalAlignment="Center"
 				HorizontalAlignment="Right"
-				Text="{Binding ElementName=zoomAndPanControl, Path=ContentScale, Converter={StaticResource scaleToPercentConverter}}" Grid.ColumnSpan="2" Margin="0,10,14,9"
+				Text="{Binding ElementName=zoomAndPanControl, Path=ContentScale, Converter={StaticResource scaleToPercentConverter}}" Grid.ColumnSpan="2" Margin="0,10,13,9"
 				/>
 
-			<TextBlock
-				Grid.Column="8"
+            <TextBlock
+				Grid.Column="10"
 				VerticalAlignment="Center"
 				Text="%" Margin="0,10,0,9"
 				/>
 
-			<!-- Button to zoom out. -->
-			<Button
-				Grid.Column="10"
+            <!-- Button to zoom out. -->
+            <Button
+				Grid.Column="12"
 				Command="{StaticResource Commands.ZoomOut}"
 				>
-				-
-			</Button>
+                -
+            </Button>
 
-			<!-- Slider to change the current zoom level. -->
-			<Slider
-				Grid.Column="12"
+            <!-- Slider to change the current zoom level. -->
+            <Slider
+				Grid.Column="14"
 				Minimum="10" 
 				LargeChange="20" 
 				TickFrequency="10" 
@@ -203,48 +221,48 @@
 				Value="{Binding ElementName=zoomAndPanControl, Path=ContentScale, Converter={StaticResource scaleToPercentConverter}}"
 				/>
 
-			<!--
+            <!--
 			Button to zoom in.
 			-->
-			<Button
-				Grid.Column="14"
+            <Button
+				Grid.Column="16"
 				Command="{StaticResource Commands.ZoomIn}"
 				>
-				+
-			</Button>
+                +
+            </Button>
 
-			<!-- Stick a resize grip in the bottom right corner of the window. -->
-			<ResizeGrip
-				Grid.Column="16"
+            <!-- Stick a resize grip in the bottom right corner of the window. -->
+            <ResizeGrip
+				Grid.Column="18"
 				/>
 
-		</Grid>
+        </Grid>
 
-		<Grid 
+        <Grid 
 			Name="mainGrid" 
 			Margin="0,0,0,35"
 			>
-			<GroupBox 
+            <GroupBox 
 				Name="mainGroupBox" 
 				Margin="0,0,300,0"
 				Header="Image Pane"
 				>
-				<!--
+                <!--
 		Wrap the ZoomAndPanControl in a ScrollViewer.
 		When the scaled content that is displayed in ZoomAndPanControl is larger than the viewport onto the content
 		ScrollViewer's scrollbars can be used to manipulate the offset of the viewport.    
 		-->
-				<ScrollViewer
+                <ScrollViewer
 			x:Name="scroller"
 			CanContentScroll="True"
 			VerticalScrollBarVisibility="Visible"
 			HorizontalScrollBarVisibility="Visible"
 			>
 
-					<!--
+                    <!--
 			This is the control that handles zooming and panning.
 			-->
-					<ZoomAndPan:ZoomAndPanControl
+                    <ZoomAndPan:ZoomAndPanControl
 				x:Name="zoomAndPanControl"
 				Background="LightGray"
 				MouseDown="zoomAndPanControl_MouseDown"
@@ -254,25 +272,25 @@
 				MouseDoubleClick="zoomAndPanControl_MouseDoubleClick"
 				>
 
-						<!-- 
+                        <!-- 
 				This is the content that is displayed.
 				-->
-						<Grid
+                        <Grid
 					x:Name="theGrid"
 					Width="2000"
 					Height="2000"
 					>
-							<!--
+                            <!--
 					This Canvas is the main part of the content that is displayed.
 					-->
-							<Canvas
+                            <Canvas
 						x:Name="canvas"
 						Background="White"
 						>
-								<!--
+                                <!--
 						Add some rectangles that the user can drag about.
 						-->
-								<Rectangle
+                                <Rectangle
 							Canvas.Left="50"
 							Canvas.Top="50"
 							Width="80"
@@ -283,7 +301,7 @@
 							MouseUp="Rectangle_MouseUp"
 							MouseMove="Rectangle_MouseMove"
 							/>
-								<Rectangle
+                                <Rectangle
 							Canvas.Left="550"
 							Canvas.Top="350"
 							Width="80"
@@ -294,7 +312,7 @@
 							MouseUp="Rectangle_MouseUp"
 							MouseMove="Rectangle_MouseMove"
 							/>
-								<Rectangle
+                                <Rectangle
 							Canvas.Left="850"
 							Canvas.Top="850"
 							Width="30"
@@ -305,7 +323,7 @@
 							MouseUp="Rectangle_MouseUp"
 							MouseMove="Rectangle_MouseMove"
 							/>
-								<Rectangle
+                                <Rectangle
 							Canvas.Left="1850"
 							Canvas.Top="1850"
 							Width="80"
@@ -316,17 +334,17 @@
 							MouseUp="Rectangle_MouseUp"
 							MouseMove="Rectangle_MouseMove"
 							/>
-							</Canvas>
+                            </Canvas>
 
-							<!--
+                            <!--
 					This Canvas and Border are used as a very simple way to render a drag rectangle that the user
 					uses to specify an area to zoom in on.
 					-->
-							<Canvas
+                            <Canvas
 						x:Name="dragZoomCanvas"
 						Visibility="Collapsed"
 						>
-								<Border 
+                                <Border 
 							x:Name="dragZoomBorder"
 							BorderBrush="Black"
 							BorderThickness="1"
@@ -334,11 +352,11 @@
 							CornerRadius="1"
 							Opacity="0"
 							/>
-							</Canvas>
-						</Grid>
-					</ZoomAndPan:ZoomAndPanControl>
-				</ScrollViewer>
-			</GroupBox>
-		</Grid>
-	</Grid>
+                            </Canvas>
+                        </Grid>
+                    </ZoomAndPan:ZoomAndPanControl>
+                </ScrollViewer>
+            </GroupBox>
+        </Grid>
+    </Grid>
 </Window>
