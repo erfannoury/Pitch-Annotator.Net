@@ -38,11 +38,6 @@ namespace PitchAnnotator
         private ImageEntry CurrentImageEntry;
 
         /// <summary>
-        /// Indicates whether an image is currently being displayed or not.
-        /// </summary>
-        private bool IsImagePresent;
-
-        /// <summary>
         /// This lists all the valid image extensions
         /// </summary>
         public static string[] ValidImageExtensions = new[] { ".jpeg", ".jpg", ".png" };
@@ -154,7 +149,6 @@ namespace PitchAnnotator
             InitializeComponent();
             lines = new List<Line>();
             imageEntries = new List<ImageEntry>();
-            IsImagePresent = false;
             CurrentImageEntry = null;
 
             /// TEST
@@ -578,88 +572,6 @@ namespace PitchAnnotator
         }
 
         /// <summary>
-        /// Event raised when a mouse button is clicked down over a Rectangle.
-        /// </summary>
-        private void Rectangle_MouseDown(object sender, MouseButtonEventArgs e)
-        {
-            canvas.Focus();
-            Keyboard.Focus(canvas);
-
-            if ((Keyboard.Modifiers & ModifierKeys.Shift) != 0)
-            {
-                //
-                // When the shift key is held down special zooming logic is executed in content_MouseDown,
-                // so don't handle mouse input here.
-                //
-                return;
-            }
-
-            if (mouseHandlingMode != MouseHandlingMode.None)
-            {
-                //
-                // We are in some other mouse handling mode, don't do anything.
-                return;
-            }
-
-            mouseHandlingMode = MouseHandlingMode.DraggingRectangles;
-            origContentMouseDownPoint = e.GetPosition(canvas);
-
-            Rectangle rectangle = (Rectangle)sender;
-            rectangle.CaptureMouse();
-
-            e.Handled = true;
-        }
-
-        /// <summary>
-        /// Event raised when a mouse button is released over a Rectangle.
-        /// </summary>
-        private void Rectangle_MouseUp(object sender, MouseButtonEventArgs e)
-        {
-            if (mouseHandlingMode != MouseHandlingMode.DraggingRectangles)
-            {
-                //
-                // We are not in rectangle dragging mode.
-                //
-                return;
-            }
-
-            mouseHandlingMode = MouseHandlingMode.None;
-
-            Rectangle rectangle = (Rectangle)sender;
-            rectangle.ReleaseMouseCapture();
-
-            e.Handled = true;
-        }
-
-        /// <summary>
-        /// Event raised when the mouse cursor is moved when over a Rectangle.
-        /// </summary>
-        private void Rectangle_MouseMove(object sender, MouseEventArgs e)
-        {
-            if (mouseHandlingMode != MouseHandlingMode.DraggingRectangles)
-            {
-                //
-                // We are not in rectangle dragging mode, so don't do anything.
-                //
-                return;
-            }
-
-            Point curContentPoint = e.GetPosition(canvas);
-            Vector rectangleDragVector = curContentPoint - origContentMouseDownPoint;
-
-            //
-            // When in 'dragging rectangles' mode update the position of the rectangle as the user drags it.
-            //
-
-            origContentMouseDownPoint = curContentPoint;
-
-            Rectangle rectangle = (Rectangle)sender;
-            Canvas.SetLeft(rectangle, Canvas.GetLeft(rectangle) + rectangleDragVector.X);
-            Canvas.SetTop(rectangle, Canvas.GetTop(rectangle) + rectangleDragVector.Y);
-
-            e.Handled = true;
-        }
-        /// <summary>
         /// Event raised when mouse cursor is moving over a Line.
         /// </summary>
         void Line_MouseMove(object sender, MouseEventArgs e)
@@ -830,7 +742,7 @@ namespace PitchAnnotator
             {
                 imName = (string)((Label)(((Grid)imagesList.SelectedItem).Children[0])).Content;
                 CurrentImageEntry = imageEntries.Find(a => a.ImageName == imName);
-                DisplayNewImage();
+                DisplayImageAsCanvasBackground();
                 DisplayNewAnnotation();
             }
             if(LastSelectedImageItem != null)
@@ -840,20 +752,18 @@ namespace PitchAnnotator
 
             }
             LastSelectedImageItem = imagesList.SelectedItem;
-            //UpdateImageListViewer();
 
         }
-
-        private void DisplayNewImage()
+        
+        /// <summary>
+        /// Displays the selected image in the viewport. To display the image, it is set as the canvas's background.
+        /// </summary>
+        private void DisplayImageAsCanvasBackground()
         {
-            this.IsImagePresent = true;
-            //if(this.IsImagePresent)
-            {
-                BitmapImage im = new BitmapImage(new Uri(CurrentImageEntry.ImageAddress));
-                this.theGrid.Height = im.Height;
-                this.theGrid.Width = im.Width;
-                canvas.Background = new ImageBrush(im);
-            }
+            BitmapImage im = new BitmapImage(new Uri(CurrentImageEntry.ImageAddress));
+            this.theGrid.Height = im.Height;
+            this.theGrid.Width = im.Width;
+            canvas.Background = new ImageBrush(im);
 
         }
 
