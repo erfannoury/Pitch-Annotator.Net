@@ -277,8 +277,8 @@
 				-->
                         <Grid
 					x:Name="theGrid"
-					Width="2000"
-					Height="2000"
+					Width="20"
+					Height="20"
 					>
                             <!--
 					This Canvas is the main part of the content that is displayed.
@@ -286,56 +286,7 @@
                             <Canvas
 						x:Name="canvas"
 						Background="White"
-						>
-                                <!--
-						Add some rectangles that the user can drag about.
-						-->
-                                <Rectangle
-							Canvas.Left="50"
-							Canvas.Top="50"
-							Width="80"
-							Height="150"
-							Fill="Blue"
-							Cursor="Hand"
-							MouseDown="Rectangle_MouseDown"
-							MouseUp="Rectangle_MouseUp"
-							MouseMove="Rectangle_MouseMove"
-							/>
-                                <Rectangle
-							Canvas.Left="550"
-							Canvas.Top="350"
-							Width="80"
-							Height="150"
-							Fill="Green"
-							Cursor="Hand"
-							MouseDown="Rectangle_MouseDown"
-							MouseUp="Rectangle_MouseUp"
-							MouseMove="Rectangle_MouseMove"
-							/>
-                                <Rectangle
-							Canvas.Left="850"
-							Canvas.Top="850"
-							Width="30"
-							Height="20"
-							Fill="Purple"
-							Cursor="Hand"
-							MouseDown="Rectangle_MouseDown"
-							MouseUp="Rectangle_MouseUp"
-							MouseMove="Rectangle_MouseMove"
-							/>
-                                <Rectangle
-							Canvas.Left="1850"
-							Canvas.Top="1850"
-							Width="80"
-							Height="150"
-							Fill="Red"
-							Cursor="Hand"
-							MouseDown="Rectangle_MouseDown"
-							MouseUp="Rectangle_MouseUp"
-							MouseMove="Rectangle_MouseMove"
-							/>
-                            </Canvas>
-
+						/>
                             <!--
 					This Canvas and Border are used as a very simple way to render a drag rectangle that the user
 					uses to specify an area to zoom in on.
