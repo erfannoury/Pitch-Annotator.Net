@@ -7,6 +7,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ZoomAndPan", "ZoomAndPan\Zo
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Pitch-Annotator.Net", "Pitch-Annotator.Net.csproj", "{120DA64E-D1B0-4D35-96CA-E3986504A1B9}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "JsonPlayground", "..\JsonPlayground\JsonPlayground.csproj", "{883DA8A1-B1EC-4633-AD71-5BAC44B59E79}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CsvPlayground", "..\CsvPlayground\CsvPlayground.csproj", "{5978D7CF-25D0-4864-AB15-59A94A8D4244}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -21,6 +25,14 @@ Global
 		{120DA64E-D1B0-4D35-96CA-E3986504A1B9}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{120DA64E-D1B0-4D35-96CA-E3986504A1B9}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{120DA64E-D1B0-4D35-96CA-E3986504A1B9}.Release|Any CPU.Build.0 = Release|Any CPU
+		{883DA8A1-B1EC-4633-AD71-5BAC44B59E79}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{883DA8A1-B1EC-4633-AD71-5BAC44B59E79}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{883DA8A1-B1EC-4633-AD71-5BAC44B59E79}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{883DA8A1-B1EC-4633-AD71-5BAC44B59E79}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5978D7CF-25D0-4864-AB15-59A94A8D4244}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5978D7CF-25D0-4864-AB15-59A94A8D4244}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5978D7CF-25D0-4864-AB15-59A94A8D4244}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5978D7CF-25D0-4864-AB15-59A94A8D4244}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
