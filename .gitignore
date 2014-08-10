@@ -176,3 +176,6 @@ FakesAssemblies/
 
 # dataset folder
 dataset/
+
+#Releases folder
+Releases/
