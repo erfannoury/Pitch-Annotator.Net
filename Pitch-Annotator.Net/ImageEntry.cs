@@ -47,7 +47,7 @@ namespace PitchAnnotator
         /// </summary>
         public ImageEntry(string address, string annotationPath)
         {
-            this.ImageAddress = address;
+            this.ImageAddress = Path.GetFullPath(address);
             this.ImageName = Path.GetFileNameWithoutExtension(address);
             this.AnnotationAddress = Path.Combine(annotationPath, ImageName + ".csv");
         }
