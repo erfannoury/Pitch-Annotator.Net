@@ -143,19 +143,14 @@ namespace PitchAnnotator
         /// </summary>
         /// <param name="imFolder"> This is the address to the folder which contains all the images that are going to be annotated.</param>
         /// <param name="gtFolder"> This is the address to the folder which contains/will contain all the annotation data of the image files located in imFolder.</param>
-        //public MainWindow(string imFolder, string gtFolder)
-        public MainWindow()
+        public MainWindow(string imFolder, string annotFolder)
         {
             InitializeComponent();
             lines = new List<Line>();
             imageEntries = new List<ImageEntry>();
             CurrentImageEntry = null;
-
-            /// TEST
-            ImagesFolderAddress = @"E:\Code Vault\Github\Pitch-Annotator.Net\dataset\images\test";
-            AnnotationFolderAddress = @"E:\Code Vault\Github\Pitch-Annotator.Net\dataset\groundTruth\test";
-            /// TEST
-
+            ImagesFolderAddress = imFolder;
+            AnnotationFolderAddress = annotFolder;
             PopulateImageEntries();
         }
 
