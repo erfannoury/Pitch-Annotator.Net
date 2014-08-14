@@ -26,5 +26,25 @@ namespace PitchAnnotator
     class LineListItem : Label
     {
         public Line LineReference;
+        public LineListItem()
+        {
+            this.MouseEnter += LineListItem_MouseEnter;
+            this.MouseLeave += LineListItem_MouseLeave;
+        }
+
+        /// <summary>
+        /// Event raised when mouse enteres this element
+        /// </summary>
+        void LineListItem_MouseLeave(object sender, MouseEventArgs e)
+        {
+            this.LineReference.Stroke = Brushes.Red;
+        }
+        /// <summary>
+        /// Event raised when mouse leaves this element
+        /// </summary>
+        void LineListItem_MouseEnter(object sender, MouseEventArgs e)
+        {
+            this.LineReference.Stroke = Brushes.Orange;
+        }
     }
 }

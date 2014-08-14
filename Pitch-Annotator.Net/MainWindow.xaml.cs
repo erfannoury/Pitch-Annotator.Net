@@ -212,6 +212,8 @@ namespace PitchAnnotator
                     X2 = origContentMouseDownPoint.X,
                     Y2 = origContentMouseDownPoint.Y,
                     Stroke = Brushes.Red,
+                    StrokeEndLineCap = PenLineCap.Round,
+                    StrokeStartLineCap = PenLineCap.Round,
                     StrokeThickness = 2,
                     Cursor = Cursors.Cross,
                 };
