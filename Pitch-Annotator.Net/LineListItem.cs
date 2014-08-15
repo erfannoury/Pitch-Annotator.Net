@@ -25,11 +25,21 @@ namespace PitchAnnotator
     /// </summary>
     class LineListItem : Label
     {
+        /// <summary>
+        /// This is set to true, when the corresponding LineListItem is selected (so that when the item is selected, mouse_leave event be disabled)
+        /// </summary>
+        public bool IsItemSelected;
+
+        /// <summary>
+        /// This is a reference to the corresponding line item
+        /// </summary>
         public Line LineReference;
+
         public LineListItem()
         {
             this.MouseEnter += LineListItem_MouseEnter;
             this.MouseLeave += LineListItem_MouseLeave;
+            this.IsItemSelected = false;
         }
 
         /// <summary>
@@ -37,7 +47,10 @@ namespace PitchAnnotator
         /// </summary>
         void LineListItem_MouseLeave(object sender, MouseEventArgs e)
         {
-            this.LineReference.Stroke = Brushes.Red;
+            if(!this.IsItemSelected)
+            {
+                this.LineReference.Stroke = Brushes.Red;
+            }
         }
         /// <summary>
         /// Event raised when mouse leaves this element

@@ -28,6 +28,11 @@ namespace PitchAnnotator
     public partial class MainWindow : Window
     {
         /// <summary>
+        /// This is a reference to the last selected image item from the layersList ListView
+        /// </summary>
+        LineListItem LastSelectedLineItem;
+
+        /// <summary>
         /// This is a reference to the last selected image item from the imagesList ListView
         /// </summary>
         object LastSelectedImageItem;
@@ -184,6 +189,7 @@ namespace PitchAnnotator
 
             layersListBox = new GroupBox() { Width = listViewWidth, Height = h, Margin = new Thickness(0, h, 0, 0), HorizontalAlignment = System.Windows.HorizontalAlignment.Right, Header = "Layers", VerticalAlignment = System.Windows.VerticalAlignment.Top };
             layersLists = new ListView() { SelectionMode = SelectionMode.Single };
+            layersLists.SelectionChanged += layersLists_SelectionChanged;
             layersListBox.Content = layersLists;
             mainGrid.Children.Add(layersListBox);
         }
@@ -789,6 +795,8 @@ namespace PitchAnnotator
                             Y1 = csv.GetField<float>(2),
                             Y2 = csv.GetField<float>(3),
                             Stroke = Brushes.Red,
+                            StrokeEndLineCap = PenLineCap.Round,
+                            StrokeStartLineCap = PenLineCap.Round,
                             StrokeThickness = 2,
                             Cursor = Cursors.Cross,
                         };
@@ -866,5 +874,26 @@ namespace PitchAnnotator
                 layersLists.Items.Remove(item);
             }
         }
+
+        /// <summary>
+        /// This event is raised when a new item in the layerList is selected or the selection changes
+        /// </summary>
+        void layersLists_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            if(LastSelectedLineItem != null)
+            {
+                LastSelectedLineItem.LineReference.Stroke = Brushes.Red;
+                LastSelectedLineItem.IsItemSelected = false;
+            }
+            if(layersLists.SelectedItem != null)
+            {
+                var item = layersLists.SelectedItem as LineListItem;
+                item.LineReference.Stroke = Brushes.Orange;
+                item.IsItemSelected = true;
+                LastSelectedLineItem = item;
+
+            }
+        }
+
     }
 }
