@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
@@ -861,6 +862,30 @@ namespace PitchAnnotator
         /// </summary>
         private bool SaveCurrentImageOutput()
         {
+            outputsavedLbl.Visibility = System.Windows.Visibility.Visible;
+
+            // This thread will hide the output saved label after one second
+            Thread lblThread = new Thread(new ThreadStart(() =>
+            {
+                Thread.Sleep(1000);
+                try
+                {
+                    this.Dispatcher.Invoke(() =>
+                            {
+                                outputsavedLbl.Visibility = System.Windows.Visibility.Hidden;
+                            });
+                }
+                catch (Exception)
+                {
+                    
+                    //throw;
+                }
+                //outputsavedLbl.Visibility = System.Windows.Visibility.Hidden;
+            }));
+
+            lblThread.Start();
+            
+
             if (CurrentImageEntry == null)
                 return false;
             var outpath = CurrentImageEntry.AnnotationAddress;
@@ -1022,6 +1047,14 @@ namespace PitchAnnotator
         private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
         {
             Console.WriteLine("Image Output saved.");
+            SaveCurrentImageOutput();
+        }
+
+        /// <summary>
+        /// This event is raised when user presses `Ctrl + S` to save the output of the current image
+        /// </summary>
+        private void CommandBinding_Executed(object sender, ExecutedRoutedEventArgs e)
+        {
             SaveCurrentImageOutput();
         }
 
