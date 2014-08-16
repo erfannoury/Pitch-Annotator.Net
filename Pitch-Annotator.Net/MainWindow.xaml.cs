@@ -28,6 +28,18 @@ namespace PitchAnnotator
     public partial class MainWindow : Window
     {
         /// <summary>
+        /// This is the selected endpoint that user can move using the keyboard arrow keys
+        /// Line: a reference to the line that we want to update one of its endpoint's location
+        /// int: {1,2} which determines which endpoints to update
+        /// </summary>
+        Tuple<Line, int> SelectedLineEndpoint;
+
+        /// <summary>
+        /// When user wants to move an endpoint of a line, increase or decrease the corresponding coordinate by LineEndpointDelta
+        /// </summary>
+        static double LineEndpointDelta = 0.5f;
+
+        /// <summary>
         /// This is a reference to the last selected image item from the layersList ListView
         /// </summary>
         LineListItem LastSelectedLineItem;
@@ -644,19 +656,22 @@ namespace PitchAnnotator
             canvas.Focus();
             Keyboard.Focus(canvas);
 
+            // When the shift key is held down special zooming logic is executed in content_MouseDown,
+            // so don't handle mouse input here.
             if ((Keyboard.Modifiers & ModifierKeys.Shift) != 0)
             {
-                //
-                // When the shift key is held down special zooming logic is executed in content_MouseDown,
-                // so don't handle mouse input here.
-                //
                 return;
             }
 
+            // We are in some other mouse handling mode, don't do anything.
             if (mouseHandlingMode != MouseHandlingMode.None)
             {
-                //
-                // We are in some other mouse handling mode, don't do anything.
+                return;
+            }
+
+            /// Edit line, only if `Alt` key is pressed
+            if ((Keyboard.Modifiers & ModifierKeys.Alt) == 0)
+            {
                 return;
             }
 
@@ -670,6 +685,32 @@ namespace PitchAnnotator
             canvas.Children.Remove(line);
             canvas.Children.Add(currLine);
             currLine.CaptureMouse();
+
+
+            /// Logic to update the endpoint that then user can adjust its location using keyboard arrow keys
+
+            Point curContentPoint = e.GetPosition(canvas);
+
+            // calculate length of the line
+            double length = Math.Sqrt((line.X1 - line.X2) * (line.X1 - line.X2) + (line.Y1 - line.Y2) * (line.Y1 - line.Y2));
+
+            // calculate cursor distance to first endpoint of the line
+            double dist1 = Math.Sqrt((line.X1 - curContentPoint.X) * (line.X1 - curContentPoint.X) + (line.Y1 - curContentPoint.Y) * (line.Y1 - curContentPoint.Y));
+            // calculate cursor distance to second encpoint of the line
+            double dist2 = Math.Sqrt((line.X2 - curContentPoint.X) * (line.X2 - curContentPoint.X) + (line.Y2 - curContentPoint.Y) * (line.Y2 - curContentPoint.Y));
+
+            // mouse cursor is close enough to the first endpoint, so first endpoint will be translated
+            if (dist1 / length <= LineLengthRatio)
+            {
+                SelectedLineEndpoint = new Tuple<Line, int>(line, 1);
+            }
+            // mouse cursor is close enough to the second endpoint, so second endpoint will be translated
+            else if (dist2 / length <= LineLengthRatio)
+            {
+                SelectedLineEndpoint = new Tuple<Line, int>(line, 2);
+            }
+
+            /// Logic to update the endpoint that then user can adjust its location using keyboard arrow keys
 
             e.Handled = true;
         }
@@ -739,6 +780,10 @@ namespace PitchAnnotator
         /// </summary>
         void imagesList_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
+            /// Retunrn the focus to the canvas
+            canvas.Focus();
+            Keyboard.Focus(canvas);
+
             bool saved = SaveCurrentImageOutput();
             string imName;
             if(imagesList.SelectedItem != null)
@@ -880,6 +925,10 @@ namespace PitchAnnotator
         /// </summary>
         void layersLists_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
+            /// Return the focus to the canvas
+            canvas.Focus();
+            Keyboard.Focus(canvas);
+
             if(LastSelectedLineItem != null)
             {
                 LastSelectedLineItem.LineReference.Stroke = Brushes.Red;
@@ -893,6 +942,87 @@ namespace PitchAnnotator
                 LastSelectedLineItem = item;
 
             }
+        }
+
+        /// <summary>
+        /// This event is executed when user wants to adjust one end of a line using keyboard. This will move the endpoint one pixel (or less) down.
+        /// </summary>
+        private void MoveDownOnePixel_Executed(object sender, ExecutedRoutedEventArgs e)
+        {
+            if(SelectedLineEndpoint != null)
+            {
+                if(SelectedLineEndpoint.Item2 == 1)
+                {
+                    SelectedLineEndpoint.Item1.Y1 += LineEndpointDelta;
+                }
+                else if(SelectedLineEndpoint.Item2 == 2)
+                {
+                    SelectedLineEndpoint.Item1.Y2 += LineEndpointDelta;
+                }
+            }
+        }
+
+        /// <summary>
+        /// This event is executed when user wants to move one endpoint of a line one (or less) pixel to the left.
+        /// </summary>
+        private void MoveLeftOnePixel_Executed(object sender, ExecutedRoutedEventArgs e)
+        {
+            if (SelectedLineEndpoint != null)
+            {
+                if(SelectedLineEndpoint.Item2 == 1)
+                {
+                    SelectedLineEndpoint.Item1.X1 -= LineEndpointDelta;
+                }
+                else if(SelectedLineEndpoint.Item2 == 2)
+                {
+                    SelectedLineEndpoint.Item1.X2 -= LineEndpointDelta;
+                }
+            }
+        }
+
+        /// <summary>
+        /// This event is executed when user wants to move one endpoint of a line one (or less) pixel to the right.
+        /// </summary>
+        private void MoveRightOnePixel_Executed(object sender, ExecutedRoutedEventArgs e)
+        {
+            if (SelectedLineEndpoint != null)
+            {
+                if (SelectedLineEndpoint.Item2 == 1)
+                {
+                    SelectedLineEndpoint.Item1.X1 += LineEndpointDelta;
+                }
+                else if (SelectedLineEndpoint.Item2 == 2)
+                {
+                    SelectedLineEndpoint.Item1.X2 += LineEndpointDelta;
+                }
+            }
+        }
+
+        /// <summary>
+        /// This event is executed when user wants to move one endpoint of a line one (or less) pixel up.
+        /// </summary>
+        private void MoveUpOnePixel_Executed(object sender, ExecutedRoutedEventArgs e)
+        {
+            if (SelectedLineEndpoint != null)
+            {
+                if (SelectedLineEndpoint.Item2 == 1)
+                {
+                    SelectedLineEndpoint.Item1.Y1 -= LineEndpointDelta;
+                }
+                else if (SelectedLineEndpoint.Item2 == 2)
+                {
+                    SelectedLineEndpoint.Item1.Y2 -= LineEndpointDelta;
+                }
+            }
+        }
+
+        /// <summary>
+        /// This event is raised when the main window is being closed. This event is used to save the output of the current image, in case it hasn't been saved before.
+        /// </summary>
+        private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
+        {
+            Console.WriteLine("Image Output saved.");
+            SaveCurrentImageOutput();
         }
 
     }
