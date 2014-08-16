@@ -29,6 +29,11 @@ namespace PitchAnnotator
     public partial class MainWindow : Window
     {
         /// <summary>
+        /// This additional margin allows panning beyond the image border
+        /// </summary>
+        static int CanvasGridMargin = 50;
+
+        /// <summary>
         /// This is the selected endpoint that user can move using the keyboard arrow keys
         /// Line: a reference to the line that we want to update one of its endpoint's location
         /// int: {1,2} which determines which endpoints to update
@@ -810,9 +815,10 @@ namespace PitchAnnotator
         private void DisplayImageAsCanvasBackground()
         {
             BitmapImage im = new BitmapImage(new Uri(CurrentImageEntry.ImageAddress));
-            this.theGrid.Height = im.Height;
-            this.theGrid.Width = im.Width;
+            this.theGrid.Height = im.Height + 2 * CanvasGridMargin;
+            this.theGrid.Width = im.Width + 2 * CanvasGridMargin;
             canvas.Background = new ImageBrush(im);
+            canvas.Margin = new Thickness(CanvasGridMargin);
 
         }
 
