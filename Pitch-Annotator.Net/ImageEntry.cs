@@ -49,7 +49,12 @@ namespace PitchAnnotator
         {
             this.ImageAddress = Path.GetFullPath(address);
             this.ImageName = Path.GetFileNameWithoutExtension(address);
+            if(!Directory.Exists(annotationPath))
+            {
+                Directory.CreateDirectory(annotationPath);
+            }
             this.AnnotationAddress = Path.Combine(annotationPath, ImageName + ".csv");
+
         }
 
         public Grid GetListViewItem()
