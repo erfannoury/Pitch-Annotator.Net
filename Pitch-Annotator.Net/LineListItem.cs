@@ -80,6 +80,7 @@ namespace PitchAnnotator
         {
             this.LineReference = lineref;
 
+            // Multibinding to update label
             LineLabelMultiBinding = new MultiBinding();
             LineLabelMultiBinding.Converter = new LineListItemConverter();
             LineLabelMultiBinding.Bindings.Add(new Binding("X1") { Source = this.LineReference });
@@ -87,6 +88,11 @@ namespace PitchAnnotator
             LineLabelMultiBinding.Bindings.Add(new Binding("Y1") { Source = this.LineReference });
             LineLabelMultiBinding.Bindings.Add(new Binding("Y2") { Source = this.LineReference });
             this.SetBinding(ContentProperty, LineLabelMultiBinding);
+
+
+            this.Background = Brushes.White;
+            this.Width = 270;
+
 
             this.MouseEnter += LineListItem_MouseEnter;
             this.MouseLeave += LineListItem_MouseLeave;
