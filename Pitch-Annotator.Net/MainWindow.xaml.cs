@@ -983,11 +983,13 @@ namespace PitchAnnotator
             {
                 if(SelectedLineEndpoint.Item2 == 1)
                 {
-                    SelectedLineEndpoint.Item1.Y1 += LineEndpointDelta;
+                    //SelectedLineEndpoint.Item1.Y1 += LineEndpointDelta;
+                    SelectedLineEndpoint.Item1.SetValue(Line.Y1Property, SelectedLineEndpoint.Item1.Y1 + LineEndpointDelta);
                 }
                 else if(SelectedLineEndpoint.Item2 == 2)
                 {
-                    SelectedLineEndpoint.Item1.Y2 += LineEndpointDelta;
+                    //SelectedLineEndpoint.Item1.Y2 += LineEndpointDelta;
+                    SelectedLineEndpoint.Item1.SetValue(Line.Y2Property, SelectedLineEndpoint.Item1.Y2 + LineEndpointDelta);
                 }
             }
         }
@@ -1001,11 +1003,13 @@ namespace PitchAnnotator
             {
                 if(SelectedLineEndpoint.Item2 == 1)
                 {
-                    SelectedLineEndpoint.Item1.X1 -= LineEndpointDelta;
+                    //SelectedLineEndpoint.Item1.X1 -= LineEndpointDelta;
+                    SelectedLineEndpoint.Item1.SetValue(Line.X1Property, SelectedLineEndpoint.Item1.X1 - LineEndpointDelta);
                 }
                 else if(SelectedLineEndpoint.Item2 == 2)
                 {
-                    SelectedLineEndpoint.Item1.X2 -= LineEndpointDelta;
+                    //SelectedLineEndpoint.Item1.X2 -= LineEndpointDelta;
+                    SelectedLineEndpoint.Item1.SetValue(Line.X2Property, SelectedLineEndpoint.Item1.X2 - LineEndpointDelta);
                 }
             }
         }
@@ -1019,11 +1023,13 @@ namespace PitchAnnotator
             {
                 if (SelectedLineEndpoint.Item2 == 1)
                 {
-                    SelectedLineEndpoint.Item1.X1 += LineEndpointDelta;
+                    //SelectedLineEndpoint.Item1.X1 += LineEndpointDelta;
+                    SelectedLineEndpoint.Item1.SetValue(Line.X1Property, SelectedLineEndpoint.Item1.X1 + LineEndpointDelta);
                 }
                 else if (SelectedLineEndpoint.Item2 == 2)
                 {
-                    SelectedLineEndpoint.Item1.X2 += LineEndpointDelta;
+                    //SelectedLineEndpoint.Item1.X2 += LineEndpointDelta;
+                    SelectedLineEndpoint.Item1.SetValue(Line.X2Property, SelectedLineEndpoint.Item1.X2 + LineEndpointDelta);
                 }
             }
         }
@@ -1037,11 +1043,13 @@ namespace PitchAnnotator
             {
                 if (SelectedLineEndpoint.Item2 == 1)
                 {
-                    SelectedLineEndpoint.Item1.Y1 -= LineEndpointDelta;
+                    //SelectedLineEndpoint.Item1.Y1 -= LineEndpointDelta;
+                    SelectedLineEndpoint.Item1.SetValue(Line.Y1Property, SelectedLineEndpoint.Item1.Y1 - LineEndpointDelta);
                 }
                 else if (SelectedLineEndpoint.Item2 == 2)
                 {
-                    SelectedLineEndpoint.Item1.Y2 -= LineEndpointDelta;
+                    //SelectedLineEndpoint.Item1.Y2 -= LineEndpointDelta;
+                    SelectedLineEndpoint.Item1.SetValue(Line.Y2Property, SelectedLineEndpoint.Item1.Y2 - LineEndpointDelta);
                 }
             }
         }
