@@ -300,7 +300,7 @@ namespace PitchAnnotator
                     // When line creation has finished, add the line to the lines list
                     lines.Add(currLine);
                     canvas.Children.Remove(currLine);
-                    updateLayersListView();
+                    updateLayersListView(true);
                     clearStatusBarLocationLabels();
                 }
 
@@ -916,7 +916,7 @@ namespace PitchAnnotator
         /// <summary>
         /// When a new line is added, a line is modified or deleted, this will be called to update the list view showing layers
         /// </summary>
-        private void updateLayersListView()
+        private void updateLayersListView(bool newLineAdded = false)
         {
             layersLists.Items.Clear();
             foreach (var line in lines)
@@ -931,6 +931,10 @@ namespace PitchAnnotator
                         line.X1.ToString("F3"), line.Y1.ToString("F3"),
                         line.X2.ToString("F3"), line.Y2.ToString("F3")),
                 });
+            }
+            if(newLineAdded)
+            {
+                layersLists.SelectedItem = layersLists.Items.GetItemAt(layersLists.Items.Count - 1);
             }
         }
 
