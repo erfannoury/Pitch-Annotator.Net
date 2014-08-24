@@ -69,6 +69,10 @@
 			Command="{StaticResource Commands.DeleteLineLayer}"
 			/>
         <KeyBinding
+            Key="Delete"
+            Command="{StaticResource Commands.DeleteLineLayer}"
+            />
+        <KeyBinding
 			Key="Up"
 			Command="{StaticResource Commands.MoveUpOnePixel}"
 			/>

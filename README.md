@@ -14,7 +14,7 @@ Also you can move a selected endpoint using keyboard arrow keys
 (**_Note_**: focus shouldn't be on any of the list views. To change the focus, press `TAB`).
 
 ###To delete a line:
-Select a line from the list of lines and press `D` or delete using the `Delete Layer` button.
+Select a line from the list of lines and press `D`, `Delete`, or delete using the `Delete Layer` button.
 
 ###To draw a new line:
 Press and hold `Ctrl` to draw a new line
