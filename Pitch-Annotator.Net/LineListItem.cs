@@ -35,10 +35,14 @@ namespace PitchAnnotator
         /// </summary>
         public Line LineReference;
 
-        public LineListItem()
+        public LineListItem(Line lineref)
         {
+            this.LineReference = lineref;
+
             this.MouseEnter += LineListItem_MouseEnter;
             this.MouseLeave += LineListItem_MouseLeave;
+
+
             this.IsItemSelected = false;
         }
 
