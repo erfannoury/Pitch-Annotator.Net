@@ -908,7 +908,10 @@ namespace PitchAnnotator
                 }
             }
             if (lines.Count == 0)
+            {
+                File.Delete(CurrentImageEntry.AnnotationAddress);
                 return false;
+            }
 
             return true;
         }
