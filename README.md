@@ -36,3 +36,11 @@ Press `P`
 Acknowledgment
 ==============
 ZoomAndPanControl component from this [article](http://www.codeproject.com/Articles/85603/A-WPF-custom-control-for-zooming-and-panning) on CoderProject has been used  for zooming and panning functionality.
+
+
+Releases
+========
+You can find the latest releases (and also past releases) in the [Releases Page](https://github.com/erfannoury/Pitch-Annotator.Net/releases/tag/v0.2.1).
+
+
+
