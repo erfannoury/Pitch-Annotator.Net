@@ -1073,9 +1073,21 @@ namespace PitchAnnotator
         /// <summary>
         /// This event is raised when user presses `Ctrl + S` to save the output of the current image
         /// </summary>
-        private void CommandBinding_Executed(object sender, ExecutedRoutedEventArgs e)
+        private void SaveOutput_Executed(object sender, ExecutedRoutedEventArgs e)
         {
-            SaveCurrentImageOutput();
+            var stat = SaveCurrentImageOutput();
+            if(imagesList.SelectedItem != null)
+            {
+                if(stat == true)
+                {
+                    ((Grid)imagesList.SelectedItem).Background = Brushes.LightGreen;
+                }
+                else
+                {
+                    ((Grid)imagesList.SelectedItem).Background = Brushes.PaleVioletRed;
+                }
+
+            }
         }
 
     }

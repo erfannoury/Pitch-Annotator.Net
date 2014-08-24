@@ -143,7 +143,7 @@
             />
         <CommandBinding
             Command="{StaticResource Commands.SaveOutput}"
-            Executed="CommandBinding_Executed"
+            Executed="SaveOutput_Executed"
             />
     </Window.CommandBindings>
 
