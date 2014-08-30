@@ -67,35 +67,48 @@ namespace PitchAnnotator
         public bool IsItemSelected;
 
         /// <summary>
-        /// This is a reference to the corresponding line item
+        /// This is the actual line ui element that will be displayed over the image, this is now linked with the listitem it belongs to
         /// </summary>
-        public Line LineReference;
+        public Line line;
 
         /// <summary>
         /// This multibinding will cause the label of the linelistitem get updated as the corresponding line endpoints move
         /// </summary>
         private MultiBinding LineLabelMultiBinding;
 
-        public LineEntry(Line lineref)
+        public LineEntry(double x1, double y1, double x2, double y2)
         {
-            this.LineReference = lineref;
+            this.line = new Line()
+            {
+                X1 = x1,
+                Y1 = y1,
+                X2 = x2,
+                Y2 = y2,
+                Stroke = Brushes.Red,
+                StrokeEndLineCap = PenLineCap.Round,
+                StrokeStartLineCap = PenLineCap.Round,
+                StrokeThickness = 2,
+                Cursor = Cursors.Cross
+            };
+
+
 
             // Multibinding to update label
-            LineLabelMultiBinding = new MultiBinding();
-            LineLabelMultiBinding.Converter = new LineListItemConverter();
-            LineLabelMultiBinding.Bindings.Add(new Binding("X1") { Source = this.LineReference });
-            LineLabelMultiBinding.Bindings.Add(new Binding("X2") { Source = this.LineReference });
-            LineLabelMultiBinding.Bindings.Add(new Binding("Y1") { Source = this.LineReference });
-            LineLabelMultiBinding.Bindings.Add(new Binding("Y2") { Source = this.LineReference });
-            this.SetBinding(ContentProperty, LineLabelMultiBinding);
+            //LineLabelMultiBinding = new MultiBinding();
+            //LineLabelMultiBinding.Converter = new LineListItemConverter();
+            //LineLabelMultiBinding.Bindings.Add(new Binding("X1") { Source = this.line });
+            //LineLabelMultiBinding.Bindings.Add(new Binding("X2") { Source = this.line });
+            //LineLabelMultiBinding.Bindings.Add(new Binding("Y1") { Source = this.line });
+            //LineLabelMultiBinding.Bindings.Add(new Binding("Y2") { Source = this.line });
+            //this.SetBinding(ContentProperty, LineLabelMultiBinding);
 
 
             this.Background = Brushes.White;
             this.Width = 270;
 
 
-            this.MouseEnter += LineListItem_MouseEnter;
-            this.MouseLeave += LineListItem_MouseLeave;
+            this.MouseEnter += LineEntry_MouseEnter;
+            this.MouseLeave += LineEntry_MouseLeave;
 
             this.IsItemSelected = false;
         }
@@ -103,19 +116,19 @@ namespace PitchAnnotator
         /// <summary>
         /// Event raised when mouse enteres this element
         /// </summary>
-        void LineListItem_MouseLeave(object sender, MouseEventArgs e)
+        void LineEntry_MouseLeave(object sender, MouseEventArgs e)
         {
             if(!this.IsItemSelected)
             {
-                this.LineReference.Stroke = Brushes.Red;
+                this.line.Stroke = Brushes.Red;
             }
         }
         /// <summary>
         /// Event raised when mouse leaves this element
         /// </summary>
-        void LineListItem_MouseEnter(object sender, MouseEventArgs e)
+        void LineEntry_MouseEnter(object sender, MouseEventArgs e)
         {
-            this.LineReference.Stroke = Brushes.Orange;
+            this.line.Stroke = Brushes.Orange;
         }
     }
 }

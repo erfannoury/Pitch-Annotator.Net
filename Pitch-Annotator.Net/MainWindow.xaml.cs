@@ -921,8 +921,8 @@ namespace PitchAnnotator
             if(layersLists.SelectedItem != null)
             {
                 var item = layersLists.SelectedItem as LineEntry;
-                canvas.Children.Remove(item.LineReference);
-                lines.Remove(item.LineReference);
+                canvas.Children.Remove(item.line);
+                lines.Remove(item.line);
                 layersLists.Items.Remove(item);
             }
         }
@@ -938,13 +938,13 @@ namespace PitchAnnotator
 
             if(LastSelectedLineItem != null)
             {
-                LastSelectedLineItem.LineReference.Stroke = Brushes.Red;
+                LastSelectedLineItem.line.Stroke = Brushes.Red;
                 LastSelectedLineItem.IsItemSelected = false;
             }
             if(layersLists.SelectedItem != null)
             {
                 var item = layersLists.SelectedItem as LineEntry;
-                item.LineReference.Stroke = Brushes.Orange;
+                item.line.Stroke = Brushes.Orange;
                 item.IsItemSelected = true;
                 LastSelectedLineItem = item;
 
