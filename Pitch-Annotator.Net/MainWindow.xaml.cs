@@ -152,11 +152,6 @@ namespace PitchAnnotator
         private bool prevZoomRectSet = false;
 
         /// <summary>
-        /// This is the location where user starts to draw a new line
-        /// </summary>
-        private Point initialMouseLoc;
-
-        /// <summary>
         /// The line that user is currently drawing
         /// </summary>
         private Line currLine;
@@ -245,7 +240,6 @@ namespace PitchAnnotator
                 currLine.MouseUp += Line_MouseUp;
                 currLine.MouseMove += Line_MouseMove;
                 canvas.Children.Add(currLine);
-                updateStatusBarLocationLabels(currLine.X1, currLine.Y1, currLine.X2, currLine.Y2);
 
             }
             else if ((Keyboard.Modifiers & ModifierKeys.Shift) != 0 &&
@@ -301,7 +295,6 @@ namespace PitchAnnotator
                     lines.Add(currLine);
                     canvas.Children.Remove(currLine);
                     updateLayersListView(true);
-                    clearStatusBarLocationLabels();
                 }
 
                 zoomAndPanControl.ReleaseMouseCapture();
@@ -370,7 +363,6 @@ namespace PitchAnnotator
                 Point curLoc = e.GetPosition(canvas);
                 currLine.X2 = curLoc.X;
                 currLine.Y2 = curLoc.Y;
-                updateStatusBarLocationLabels(currLine.X1, currLine.Y1, currLine.X2, currLine.Y2);
 
                 e.Handled = true;
             }
@@ -630,8 +622,6 @@ namespace PitchAnnotator
                 // do nothing
                 // TODO: maybe you can drag the line in this case. This feature might be added in future
             }
-
-            updateStatusBarLocationLabels(line.X1, line.Y1, line.X2, line.Y2);
         }
 
         /// <summary>
@@ -648,8 +638,6 @@ namespace PitchAnnotator
 
             canvas.Children.Remove(currLine);
             updateLayersListView();
-
-            clearStatusBarLocationLabels();
 
             e.Handled = true;
         }
@@ -734,24 +722,6 @@ namespace PitchAnnotator
                 layersListBox.Height = h;
                 layersListBox.Margin = new Thickness(0, h, 0, 0);
             }
-        }
-
-        /// <summary>
-        /// This will update the labels showing endpoint locations in the statis bar
-        /// </summary>
-        private void updateStatusBarLocationLabels(double x1, double y1, double x2, double y2)
-        {
-            firstPointLbl.Content = string.Format("From ({0}, {1})", x1.ToString("F3"), y1.ToString("F3"));
-            secondPointLbl.Content = string.Format("To ({0}, {1})", x2.ToString("F3"), y2.ToString("F3"));
-        }
-
-        /// <summary>
-        /// This will clear the content of the location labels in the status bar
-        /// </summary>
-        private void clearStatusBarLocationLabels()
-        {
-            firstPointLbl.Content = "";
-            secondPointLbl.Content = "";
         }
 
         /// <summary>
