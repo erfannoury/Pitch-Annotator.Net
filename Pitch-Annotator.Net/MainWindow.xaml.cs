@@ -86,9 +86,9 @@ namespace PitchAnnotator
         private static double LineLengthRatio = 0.2;
 
         /// <summary>
-        /// This list will contain all the lines added to the image
+        /// This list will contain all the lineEntries added to the image
         /// </summary>
-        List<Line> lines;
+        List<LineEntry> lineEntries;
 
         /// <summary>
         /// This GroupBox element surrounds the ListBox showing the layers on the image
@@ -154,7 +154,7 @@ namespace PitchAnnotator
         /// <summary>
         /// The line that user is currently drawing
         /// </summary>
-        private Line currLine;
+        private LineEntry currLineEntry;
 
         /// <summary>
         /// This is the constructor for the Main window of the appliation
@@ -164,7 +164,7 @@ namespace PitchAnnotator
         public MainWindow(string imFolder, string annotFolder)
         {
             InitializeComponent();
-            lines = new List<Line>();
+            lineEntries = new List<LineEntry>();
             imageEntries = new List<ImageEntry>();
             CurrentImageEntry = null;
             ImagesFolderAddress = imFolder;
@@ -178,12 +178,12 @@ namespace PitchAnnotator
         private void MainWindow_Loaded(object sender, RoutedEventArgs e)
         {
             createListsSectionUI();
+            UpdateImageListViewer();
             //HelpTextWindow helpTextWindow = new HelpTextWindow();
             //helpTextWindow.Left = this.Left + this.Width + 5;
             //helpTextWindow.Top = this.Top;
             //helpTextWindow.Owner = this;
             //helpTextWindow.Show();
-            UpdateImageListViewer();
         }
 
         /// <summary>
@@ -224,22 +224,27 @@ namespace PitchAnnotator
             {
                 // Ctrl + left-down initiates line drawing mode
                 mouseHandlingMode = MouseHandlingMode.LineDrawing;
-                currLine = new Line()
-                {
-                    X1 = origContentMouseDownPoint.X,
-                    Y1 = origContentMouseDownPoint.Y,
-                    X2 = origContentMouseDownPoint.X,
-                    Y2 = origContentMouseDownPoint.Y,
-                    Stroke = Brushes.Red,
-                    StrokeEndLineCap = PenLineCap.Round,
-                    StrokeStartLineCap = PenLineCap.Round,
-                    StrokeThickness = 2,
-                    Cursor = Cursors.Cross,
-                };
-                currLine.MouseDown += Line_MouseDown;
-                currLine.MouseUp += Line_MouseUp;
-                currLine.MouseMove += Line_MouseMove;
-                canvas.Children.Add(currLine);
+                //currLineEntry = new Line()
+                //{
+                //    X1 = origContentMouseDownPoint.X,
+                //    Y1 = origContentMouseDownPoint.Y,
+                //    X2 = origContentMouseDownPoint.X,
+                //    Y2 = origContentMouseDownPoint.Y,
+                //    Stroke = Brushes.Red,
+                //    StrokeEndLineCap = PenLineCap.Round,
+                //    StrokeStartLineCap = PenLineCap.Round,
+                //    StrokeThickness = 2,
+                //    Cursor = Cursors.Cross,
+                //};
+                //currLineEntry.MouseDown += Line_MouseDown;
+                //currLineEntry.MouseUp += Line_MouseUp;
+                //currLineEntry.MouseMove += Line_MouseMove;
+                //canvas.Children.Add(currLineEntry);
+                currLineEntry = new LineEntry(origContentMouseDownPoint.X, origContentMouseDownPoint.Y, origContentMouseDownPoint.X, origContentMouseDownPoint.Y);
+                currLineEntry.line.MouseDown += Line_MouseDown;
+                currLineEntry.line.MouseUp += Line_MouseUp;
+                currLineEntry.line.MouseMove += Line_MouseMove;
+                canvas.Children.Add(currLineEntry.line);
 
             }
             else if ((Keyboard.Modifiers & ModifierKeys.Shift) != 0 &&
@@ -291,10 +296,9 @@ namespace PitchAnnotator
 
                 else if (mouseHandlingMode == MouseHandlingMode.LineDrawing)
                 {
-                    // When line creation has finished, add the line to the lines list
-                    lines.Add(currLine);
-                    canvas.Children.Remove(currLine);
-                    updateLayersListView(true);
+                    // When line creation has finished, add the line to the lineEntries list
+                    lineEntries.Add(currLineEntry);
+                    updateLayersListView(currLineEntry);
                 }
 
                 zoomAndPanControl.ReleaseMouseCapture();
@@ -361,8 +365,8 @@ namespace PitchAnnotator
                 // When the user is drawing the line
                 //
                 Point curLoc = e.GetPosition(canvas);
-                currLine.X2 = curLoc.X;
-                currLine.Y2 = curLoc.Y;
+                currLineEntry.line.X2 = curLoc.X;
+                currLineEntry.line.Y2 = curLoc.Y;
 
                 e.Handled = true;
             }
@@ -632,12 +636,9 @@ namespace PitchAnnotator
             if (mouseHandlingMode != MouseHandlingMode.DraggingLines)
                 return;
 
-            lines.Add(currLine);
-            currLine.ReleaseMouseCapture();
+            Line line = (Line)sender;
+            line.ReleaseMouseCapture();
             mouseHandlingMode = MouseHandlingMode.None;
-
-            canvas.Children.Remove(currLine);
-            updateLayersListView();
 
             e.Handled = true;
         }
@@ -674,12 +675,7 @@ namespace PitchAnnotator
 
             // Copy the old line, then remove it, work with the temporary line and then add it to the list
             Line line = (Line)sender;
-            currLine = line;
-            lines.Remove(line);
-            canvas.Children.Remove(line);
-            canvas.Children.Add(currLine);
-            currLine.CaptureMouse();
-
+            line.CaptureMouse();
 
             /// Logic to update the endpoint that then user can adjust its location using keyboard arrow keys
 
@@ -793,16 +789,16 @@ namespace PitchAnnotator
         }
 
         /// <summary>
-        /// When a new image is selected, lines displayed on the canvas will be deleted and new lines from the currently selected image's annotation file will be displayed
+        /// When a new image is selected, lineEntries displayed on the canvas will be deleted and new lineEntries from the currently selected image's annotation file will be displayed
         /// </summary>
         private void DisplayNewAnnotation()
         {
-            // First delete all the lines displayed on the canvas
+            // First delete all the lineEntries displayed on the canvas
             canvas.Children.Clear();
-            // then clear the lines List containing all the annotated lines
-            lines.Clear();
+            // then clear the lineEntries List containing all the annotated lineEntries
+            lineEntries.Clear();
 
-            // if the currently selected image already has annotation file, add all the lines to the proper lists
+            // if the currently selected image already has annotation file, add all the lineEntries to the proper lists
             if(CurrentImageEntry.HasAnnotation)
             {
                 using (var streamreader = new StreamReader(CurrentImageEntry.AnnotationAddress))
@@ -810,27 +806,33 @@ namespace PitchAnnotator
                     CsvReader csv = new CsvReader(streamreader, new CsvHelper.Configuration.CsvConfiguration() { HasHeaderRecord = false });
                     while(csv.Read())
                     {
-                        var line = new Line()
-                        {
-                            X1 = csv.GetField<float>(0),
-                            X2 = csv.GetField<float>(1),
-                            Y1 = csv.GetField<float>(2),
-                            Y2 = csv.GetField<float>(3),
-                            Stroke = Brushes.Red,
-                            StrokeEndLineCap = PenLineCap.Round,
-                            StrokeStartLineCap = PenLineCap.Round,
-                            StrokeThickness = 2,
-                            Cursor = Cursors.Cross,
-                        };
-                        line.MouseDown += Line_MouseDown;
-                        line.MouseUp += Line_MouseUp;
-                        line.MouseMove += Line_MouseMove;
-                        lines.Add(line);
-                        canvas.Children.Add(line);
+                        //var line = new Line()
+                        //{
+                        //    X1 = csv.GetField<float>(0),
+                        //    X2 = csv.GetField<float>(1),
+                        //    Y1 = csv.GetField<float>(2),
+                        //    Y2 = csv.GetField<float>(3),
+                        //    Stroke = Brushes.Red,
+                        //    StrokeEndLineCap = PenLineCap.Round,
+                        //    StrokeStartLineCap = PenLineCap.Round,
+                        //    StrokeThickness = 2,
+                        //    Cursor = Cursors.Cross,
+                        //};
+                        //line.MouseDown += Line_MouseDown;
+                        //line.MouseUp += Line_MouseUp;
+                        //line.MouseMove += Line_MouseMove;
+                        //lineEntries.Add(line);
+                        //canvas.Children.Add(line);
+                        var lineEntry = new LineEntry(csv.GetField<float>(0), csv.GetField<float>(1), csv.GetField<float>(2), csv.GetField<float>(3));
+                        lineEntry.line.MouseDown += Line_MouseDown;
+                        lineEntry.line.MouseUp += Line_MouseUp;
+                        lineEntry.line.MouseMove += Line_MouseMove;
+                        lineEntries.Add(lineEntry);
+                        updateLayersListView(lineEntry);
+                        canvas.Children.Add(lineEntry.line);
                     }
                 }
             }
-            updateLayersListView();
         }
 
         /// <summary>
@@ -868,16 +870,16 @@ namespace PitchAnnotator
             using (var streamwriter = new StreamWriter(CurrentImageEntry.AnnotationAddress, false))
             {
                 var csvwriter = new CsvWriter(streamwriter);
-                foreach (var line in lines)
+                foreach (var lineEnt in lineEntries)
                 {
-                    csvwriter.WriteField<double>(line.X1);
-                    csvwriter.WriteField<double>(line.X2);
-                    csvwriter.WriteField<double>(line.Y1);
-                    csvwriter.WriteField<double>(line.Y2);
+                    csvwriter.WriteField<double>(lineEnt.line.X1);
+                    csvwriter.WriteField<double>(lineEnt.line.X2);
+                    csvwriter.WriteField<double>(lineEnt.line.Y1);
+                    csvwriter.WriteField<double>(lineEnt.line.Y2);
                     csvwriter.NextRecord();
                 }
             }
-            if (lines.Count == 0)
+            if (lineEntries.Count == 0)
             {
                 File.Delete(CurrentImageEntry.AnnotationAddress);
                 return false;
@@ -889,26 +891,14 @@ namespace PitchAnnotator
         /// <summary>
         /// When a new line is added, a line is modified or deleted, this will be called to update the list view showing layers
         /// </summary>
-        private void updateLayersListView(bool newLineAdded = false)
+        private void updateLayersListView(LineEntry lineEntry)
         {
-            layersLists.Items.Clear();
-            foreach (var line in lines)
-            {
-                if (!canvas.Children.Contains(line))
-                {
-                    canvas.Children.Add(line);
-                }
-                layersLists.Items.Add(new LineEntry(line)
-                {
-                    Content = string.Format("Line ({0},{1}) - ({2},{3})",
-                        line.X1.ToString("F3"), line.Y1.ToString("F3"),
-                        line.X2.ToString("F3"), line.Y2.ToString("F3")),
-                });
-            }
-            if(newLineAdded)
-            {
-                layersLists.SelectedItem = layersLists.Items.GetItemAt(layersLists.Items.Count - 1);
-            }
+            layersLists.Items.Add(lineEntry);
+            layersLists.Items.SortDescriptions.Clear();
+            layersLists.Items.SortDescriptions.Add(new System.ComponentModel.SortDescription("Content", System.ComponentModel.ListSortDirection.Ascending));
+            layersLists.Items.Refresh();
+            //layersLists.SelectedItem = layersLists.Items.GetItemAt(layersLists.Items.Count - 1);
+            layersLists.SelectedItem = lineEntry;
         }
 
         /// <summary>
@@ -922,7 +912,7 @@ namespace PitchAnnotator
             {
                 var item = layersLists.SelectedItem as LineEntry;
                 canvas.Children.Remove(item.line);
-                lines.Remove(item.line);
+                lineEntries.Remove(item);
                 layersLists.Items.Remove(item);
             }
         }

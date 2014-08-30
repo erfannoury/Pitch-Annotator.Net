@@ -91,6 +91,9 @@ namespace PitchAnnotator
                 Cursor = Cursors.Cross
             };
 
+            this.Content = string.Format("Line ({0},{1}) - ({2},{3})",
+                        line.X1.ToString("F3"), line.Y1.ToString("F3"),
+                        line.X2.ToString("F3"), line.Y2.ToString("F3"));
 
 
             // Multibinding to update label
