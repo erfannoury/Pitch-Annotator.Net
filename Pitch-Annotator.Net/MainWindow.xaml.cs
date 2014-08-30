@@ -48,7 +48,7 @@ namespace PitchAnnotator
         /// <summary>
         /// This is a reference to the last selected image item from the layersList ListView
         /// </summary>
-        LineListItem LastSelectedLineItem;
+        LineEntry LastSelectedLineItem;
 
         /// <summary>
         /// This is a reference to the last selected image item from the imagesList ListView
@@ -898,7 +898,7 @@ namespace PitchAnnotator
                 {
                     canvas.Children.Add(line);
                 }
-                layersLists.Items.Add(new LineListItem(line)
+                layersLists.Items.Add(new LineEntry(line)
                 {
                     Content = string.Format("Line ({0},{1}) - ({2},{3})",
                         line.X1.ToString("F3"), line.Y1.ToString("F3"),
@@ -920,7 +920,7 @@ namespace PitchAnnotator
         {
             if(layersLists.SelectedItem != null)
             {
-                var item = layersLists.SelectedItem as LineListItem;
+                var item = layersLists.SelectedItem as LineEntry;
                 canvas.Children.Remove(item.LineReference);
                 lines.Remove(item.LineReference);
                 layersLists.Items.Remove(item);
@@ -943,7 +943,7 @@ namespace PitchAnnotator
             }
             if(layersLists.SelectedItem != null)
             {
-                var item = layersLists.SelectedItem as LineListItem;
+                var item = layersLists.SelectedItem as LineEntry;
                 item.LineReference.Stroke = Brushes.Orange;
                 item.IsItemSelected = true;
                 LastSelectedLineItem = item;

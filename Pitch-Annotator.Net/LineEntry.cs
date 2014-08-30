@@ -25,7 +25,7 @@ namespace PitchAnnotator
         /// Converts source values to a value for the binding target
         /// </summary>
         /// <param name="values"> {X1, X2, Y1, Y2} </param>
-        /// <returns>Proper LineListItem label text that will be updated</returns>
+        /// <returns>Proper LineEntry label text that will be updated</returns>
         public object Convert(object[] values, Type targetType, object parameter, System.Globalization.CultureInfo culture)
         {
             if (values.Length != 4)
@@ -59,10 +59,10 @@ namespace PitchAnnotator
     /// Class for creating appropriate ListItems for the ListView showing line layers for each image
     /// It has the full functionality of the Label class, but also contains a reference to a Line object
     /// </summary>
-    class LineListItem : Label
+    class LineEntry : Label
     {
         /// <summary>
-        /// This is set to true, when the corresponding LineListItem is selected (so that when the item is selected, mouse_leave event be disabled)
+        /// This is set to true, when the corresponding LineEntry is selected (so that when the item is selected, mouse_leave event be disabled)
         /// </summary>
         public bool IsItemSelected;
 
@@ -76,7 +76,7 @@ namespace PitchAnnotator
         /// </summary>
         private MultiBinding LineLabelMultiBinding;
 
-        public LineListItem(Line lineref)
+        public LineEntry(Line lineref)
         {
             this.LineReference = lineref;
 
