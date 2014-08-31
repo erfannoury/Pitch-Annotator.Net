@@ -826,7 +826,7 @@ namespace PitchAnnotator
                 }
                 catch (Exception e)
                 {
-                    Console.WriteLine("Exception occured when saving {0} image's output", CurrentImageEntry.ImageName);
+                    Console.WriteLine("Exception occured when saving image {0}'s  output.", CurrentImageEntry.ImageName);
                     Console.WriteLine("Exception message:\n{0}", e.Message);
                 }
             }));
@@ -881,7 +881,7 @@ namespace PitchAnnotator
                 canvas.Children.Remove(item.line);
                 lineEntries.Remove(item);
                 layersLists.Items.Remove(item);
-                layersLists.SelectedIndex = idx;
+                layersLists.SelectedIndex = idx >= layersLists.Items.Count ? layersLists.Items.Count - 1 : idx;
             }
         }
 
