@@ -24,7 +24,7 @@ namespace PitchAnnotator
         /// <summary>
         /// Converts source values to a value for the binding target
         /// </summary>
-        /// <param name="values"> {X1, X2, Y1, Y2} </param>
+        /// <param name="values"> {X1, Y1, X2, Y2} </param>
         /// <returns>Proper LineEntry label text that will be updated</returns>
         public object Convert(object[] values, Type targetType, object parameter, System.Globalization.CultureInfo culture)
         {
@@ -122,7 +122,7 @@ namespace PitchAnnotator
         /// </summary>
         void LineEntry_MouseLeave(object sender, MouseEventArgs e)
         {
-            if(!this.IsItemSelected)
+            if (!this.IsItemSelected)
             {
                 this.line.Stroke = Brushes.Red;
             }

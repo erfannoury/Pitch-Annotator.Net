@@ -68,8 +68,6 @@ namespace PitchAnnotator
         /// <summary>
         /// IComparable interface is implemented such that files without annotation are put on the top of the list so the chances of them getting annotated would be higher.
         /// </summary>
-        /// <param name="obj"></param>
-        /// <returns></returns>
         public int CompareTo(object obj)
         {
             if (obj == null)

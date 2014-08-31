@@ -59,12 +59,12 @@ namespace PitchAnnotator
                 clipT(ymin - line.Y1, dy) &&
                 clipT(line.Y1 - ymax, -dy))
             {
-                if(tL < 1)
+                if (tL < 1)
                 {
                     line.X2 = line.X1 + tL * dx;
                     line.Y2 = line.Y1 + tL * dy;
                 }
-                if(tE > 0)
+                if (tE > 0)
                 {
                     line.X1 += tE * dx;
                     line.Y1 += tE * dy;
@@ -81,7 +81,7 @@ namespace PitchAnnotator
                 return (num <= 0);
 
             t = num / denum;
-            if(denum > 0)
+            if (denum > 0)
             {
                 if (t > tL)
                     return false;

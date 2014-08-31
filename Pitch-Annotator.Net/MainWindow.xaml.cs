@@ -120,7 +120,6 @@ namespace PitchAnnotator
         /// </summary>
         static private double listViewWidth = 300.0;
 
-
         /// <summary>
         /// Specifies the current state of the mouse handling logic.
         /// </summary>
@@ -229,22 +228,6 @@ namespace PitchAnnotator
             {
                 // Ctrl + left-down initiates line drawing mode
                 mouseHandlingMode = MouseHandlingMode.LineDrawing;
-                //currLineEntry = new Line()
-                //{
-                //    X1 = origContentMouseDownPoint.X,
-                //    Y1 = origContentMouseDownPoint.Y,
-                //    X2 = origContentMouseDownPoint.X,
-                //    Y2 = origContentMouseDownPoint.Y,
-                //    Stroke = Brushes.Red,
-                //    StrokeEndLineCap = PenLineCap.Round,
-                //    StrokeStartLineCap = PenLineCap.Round,
-                //    StrokeThickness = 2,
-                //    Cursor = Cursors.Cross,
-                //};
-                //currLineEntry.MouseDown += Line_MouseDown;
-                //currLineEntry.MouseUp += Line_MouseUp;
-                //currLineEntry.MouseMove += Line_MouseMove;
-                //canvas.Children.Add(currLineEntry);
                 currLineEntry = new LineEntry(origContentMouseDownPoint.X, origContentMouseDownPoint.Y, origContentMouseDownPoint.X, origContentMouseDownPoint.Y);
                 currLineEntry.line.MouseDown += Line_MouseDown;
                 currLineEntry.line.MouseUp += Line_MouseUp;
@@ -300,13 +283,6 @@ namespace PitchAnnotator
                     ApplyDragZoomRect();
                 }
 
-                else if (mouseHandlingMode == MouseHandlingMode.LineDrawing)
-                {
-                    // When line creation has finished, add the line to the lineEntries list
-                    //lineEntries.Add(currLineEntry);
-                    //updateLayersListView(currLineEntry);
-                }
-
                 zoomAndPanControl.ReleaseMouseCapture();
                 mouseHandlingMode = MouseHandlingMode.None;
                 e.Handled = true;
@@ -350,7 +326,6 @@ namespace PitchAnnotator
                     mouseHandlingMode = MouseHandlingMode.DragZooming;
                     Point curContentMousePoint = e.GetPosition(theGrid);
                     var marginalizedOrigContentMouseDownPoint = new Point(origContentMouseDownPoint.X + CanvasGridMargin, origContentMouseDownPoint.Y + CanvasGridMargin);
-                    //InitDragZoomRect(origContentMouseDownPoint, curContentMousePoint);
                     InitDragZoomRect(marginalizedOrigContentMouseDownPoint, curContentMousePoint);
                 }
 
@@ -364,7 +339,6 @@ namespace PitchAnnotator
                 //
                 Point curContentMousePoint = e.GetPosition(theGrid);
                 var marginalizedOrigContentMouseDownPoint = new Point(origContentMouseDownPoint.X + CanvasGridMargin, origContentMouseDownPoint.Y + CanvasGridMargin);
-                //SetDragZoomRect(origContentMouseDownPoint, curContentMousePoint);
                 SetDragZoomRect(marginalizedOrigContentMouseDownPoint, curContentMousePoint);
 
                 e.Handled = true;
@@ -736,9 +710,9 @@ namespace PitchAnnotator
         private void PopulateImageEntries()
         {
             imageEntries.Clear();
-            foreach(var file in Directory.EnumerateFiles(ImagesFolderAddress, "*", SearchOption.AllDirectories))
+            foreach (var file in Directory.EnumerateFiles(ImagesFolderAddress, "*", SearchOption.AllDirectories))
             {
-                if(ValidImageExtensions.Contains(System.IO.Path.GetExtension(file)))
+                if (ValidImageExtensions.Contains(System.IO.Path.GetExtension(file)))
                     imageEntries.Add(new ImageEntry(file, AnnotationFolderAddress));
             }
         }
@@ -751,7 +725,7 @@ namespace PitchAnnotator
             imagesList.Items.Clear();
             PopulateImageEntries();
             imageEntries.Sort();
-            foreach(var ent in imageEntries)
+            foreach (var ent in imageEntries)
             {
                 imagesList.Items.Add(ent.GetListViewItem());
             }
@@ -768,14 +742,14 @@ namespace PitchAnnotator
 
             bool saved = SaveCurrentImageOutput();
             string imName;
-            if(imagesList.SelectedItem != null)
+            if (imagesList.SelectedItem != null)
             {
                 imName = (string)((Label)(((Grid)imagesList.SelectedItem).Children[0])).Content;
                 CurrentImageEntry = imageEntries.Find(a => a.ImageName == imName);
                 DisplayImageAsCanvasBackground();
                 DisplayNewAnnotation();
             }
-            if(LastSelectedImageItem != null)
+            if (LastSelectedImageItem != null)
             {
                 var g = (Grid)LastSelectedImageItem;
                 g.Background = saved ? Brushes.LightGreen : Brushes.PaleVioletRed;
@@ -784,7 +758,7 @@ namespace PitchAnnotator
             LastSelectedImageItem = imagesList.SelectedItem;
 
         }
-        
+
         /// <summary>
         /// Displays the selected image in the viewport. To display the image, it is set as the canvas's background.
         /// </summary>
@@ -813,30 +787,13 @@ namespace PitchAnnotator
             layersLists.Items.Clear();
 
             // if the currently selected image already has annotation file, add all the lineEntries to the proper lists
-            if(CurrentImageEntry.HasAnnotation)
+            if (CurrentImageEntry.HasAnnotation)
             {
                 using (var streamreader = new StreamReader(CurrentImageEntry.AnnotationAddress))
                 {
                     CsvReader csv = new CsvReader(streamreader, new CsvHelper.Configuration.CsvConfiguration() { HasHeaderRecord = false });
-                    while(csv.Read())
+                    while (csv.Read())
                     {
-                        //var line = new Line()
-                        //{
-                        //    X1 = csv.GetField<float>(0),
-                        //    X2 = csv.GetField<float>(1),
-                        //    Y1 = csv.GetField<float>(2),
-                        //    Y2 = csv.GetField<float>(3),
-                        //    Stroke = Brushes.Red,
-                        //    StrokeEndLineCap = PenLineCap.Round,
-                        //    StrokeStartLineCap = PenLineCap.Round,
-                        //    StrokeThickness = 2,
-                        //    Cursor = Cursors.Cross,
-                        //};
-                        //line.MouseDown += Line_MouseDown;
-                        //line.MouseUp += Line_MouseUp;
-                        //line.MouseMove += Line_MouseMove;
-                        //lineEntries.Add(line);
-                        //canvas.Children.Add(line);
                         var lineEntry = new LineEntry(csv.GetField<float>(0), csv.GetField<float>(1), csv.GetField<float>(2), csv.GetField<float>(3));
                         lineEntry.line.MouseDown += Line_MouseDown;
                         lineEntry.line.MouseUp += Line_MouseUp;
@@ -867,16 +824,15 @@ namespace PitchAnnotator
                                 outputsavedLbl.Visibility = System.Windows.Visibility.Hidden;
                             });
                 }
-                catch (Exception)
+                catch (Exception e)
                 {
-                    
-                    //throw;
+                    Console.WriteLine("Exception occured when saving {0} image's output", CurrentImageEntry.ImageName);
+                    Console.WriteLine("Exception message:\n{0}", e.Message);
                 }
-                //outputsavedLbl.Visibility = System.Windows.Visibility.Hidden;
             }));
 
             lblThread.Start();
-            
+
 
             if (CurrentImageEntry == null)
                 return false;
@@ -910,21 +866,15 @@ namespace PitchAnnotator
         private void updateLayersListView(LineEntry lineEntry)
         {
             layersLists.Items.Add(lineEntry);
-            //layersLists.Items.SortDescriptions.Clear();
-            //layersLists.Items.SortDescriptions.Add(new System.ComponentModel.SortDescription("Content", System.ComponentModel.ListSortDirection.Ascending));
-            //layersLists.Items.Refresh();
-            //layersLists.SelectedItem = layersLists.Items.GetItemAt(layersLists.Items.Count - 1);
             layersLists.SelectedItem = lineEntry;
         }
 
         /// <summary>
         /// This is executed when a layer in line layers list is being deleted
         /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
         private void DeleteLineLayer_Executed(object sender, ExecutedRoutedEventArgs e)
         {
-            if(layersLists.SelectedItem != null)
+            if (layersLists.SelectedItem != null)
             {
                 int idx = layersLists.SelectedIndex;
                 var item = layersLists.SelectedItem as LineEntry;
@@ -944,18 +894,17 @@ namespace PitchAnnotator
             canvas.Focus();
             Keyboard.Focus(canvas);
 
-            if(LastSelectedLineItem != null)
+            if (LastSelectedLineItem != null)
             {
                 LastSelectedLineItem.line.Stroke = Brushes.Red;
                 LastSelectedLineItem.IsItemSelected = false;
             }
-            if(layersLists.SelectedItem != null)
+            if (layersLists.SelectedItem != null)
             {
                 var item = layersLists.SelectedItem as LineEntry;
                 item.line.Stroke = Brushes.Orange;
                 item.IsItemSelected = true;
                 LastSelectedLineItem = item;
-
             }
         }
 
@@ -964,16 +913,14 @@ namespace PitchAnnotator
         /// </summary>
         private void MoveDownOnePixel_Executed(object sender, ExecutedRoutedEventArgs e)
         {
-            if(SelectedLineEndpoint != null)
+            if (SelectedLineEndpoint != null)
             {
-                if(SelectedLineEndpoint.Item2 == 1)
+                if (SelectedLineEndpoint.Item2 == 1)
                 {
-                    //SelectedLineEndpoint.Item1.Y1 += LineEndpointDelta;
                     SelectedLineEndpoint.Item1.SetValue(Line.Y1Property, SelectedLineEndpoint.Item1.Y1 + LineEndpointDelta);
                 }
-                else if(SelectedLineEndpoint.Item2 == 2)
+                else if (SelectedLineEndpoint.Item2 == 2)
                 {
-                    //SelectedLineEndpoint.Item1.Y2 += LineEndpointDelta;
                     SelectedLineEndpoint.Item1.SetValue(Line.Y2Property, SelectedLineEndpoint.Item1.Y2 + LineEndpointDelta);
                 }
             }
@@ -986,14 +933,12 @@ namespace PitchAnnotator
         {
             if (SelectedLineEndpoint != null)
             {
-                if(SelectedLineEndpoint.Item2 == 1)
+                if (SelectedLineEndpoint.Item2 == 1)
                 {
-                    //SelectedLineEndpoint.Item1.X1 -= LineEndpointDelta;
                     SelectedLineEndpoint.Item1.SetValue(Line.X1Property, SelectedLineEndpoint.Item1.X1 - LineEndpointDelta);
                 }
-                else if(SelectedLineEndpoint.Item2 == 2)
+                else if (SelectedLineEndpoint.Item2 == 2)
                 {
-                    //SelectedLineEndpoint.Item1.X2 -= LineEndpointDelta;
                     SelectedLineEndpoint.Item1.SetValue(Line.X2Property, SelectedLineEndpoint.Item1.X2 - LineEndpointDelta);
                 }
             }
@@ -1008,12 +953,10 @@ namespace PitchAnnotator
             {
                 if (SelectedLineEndpoint.Item2 == 1)
                 {
-                    //SelectedLineEndpoint.Item1.X1 += LineEndpointDelta;
                     SelectedLineEndpoint.Item1.SetValue(Line.X1Property, SelectedLineEndpoint.Item1.X1 + LineEndpointDelta);
                 }
                 else if (SelectedLineEndpoint.Item2 == 2)
                 {
-                    //SelectedLineEndpoint.Item1.X2 += LineEndpointDelta;
                     SelectedLineEndpoint.Item1.SetValue(Line.X2Property, SelectedLineEndpoint.Item1.X2 + LineEndpointDelta);
                 }
             }
@@ -1028,12 +971,10 @@ namespace PitchAnnotator
             {
                 if (SelectedLineEndpoint.Item2 == 1)
                 {
-                    //SelectedLineEndpoint.Item1.Y1 -= LineEndpointDelta;
                     SelectedLineEndpoint.Item1.SetValue(Line.Y1Property, SelectedLineEndpoint.Item1.Y1 - LineEndpointDelta);
                 }
                 else if (SelectedLineEndpoint.Item2 == 2)
                 {
-                    //SelectedLineEndpoint.Item1.Y2 -= LineEndpointDelta;
                     SelectedLineEndpoint.Item1.SetValue(Line.Y2Property, SelectedLineEndpoint.Item1.Y2 - LineEndpointDelta);
                 }
             }
@@ -1054,9 +995,9 @@ namespace PitchAnnotator
         private void SaveOutput_Executed(object sender, ExecutedRoutedEventArgs e)
         {
             var stat = SaveCurrentImageOutput();
-            if(imagesList.SelectedItem != null)
+            if (imagesList.SelectedItem != null)
             {
-                if(stat == true)
+                if (stat == true)
                 {
                     ((Grid)imagesList.SelectedItem).Background = Brushes.LightGreen;
                 }
