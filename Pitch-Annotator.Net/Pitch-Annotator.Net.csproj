@@ -107,6 +107,7 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="ImageEntry.cs" />
+    <Compile Include="LineClipper.cs" />
     <Compile Include="LineEntry.cs" />
     <Compile Include="MainWindow.xaml.cs">
       <DependentUpon>MainWindow.xaml</DependentUpon>
