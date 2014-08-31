@@ -387,13 +387,13 @@ namespace PitchAnnotator
 
             if (e.Delta > 0)
             {
-                Point curContentMousePoint = e.GetPosition(canvas);
+                Point curContentMousePoint = e.GetPosition(theGrid);
                 ZoomIn(curContentMousePoint);
 
             }
             else if (e.Delta < 0)
             {
-                Point curContentMousePoint = e.GetPosition(canvas);
+                Point curContentMousePoint = e.GetPosition(theGrid);
                 ZoomOut(curContentMousePoint);
             }
         }
@@ -589,7 +589,7 @@ namespace PitchAnnotator
         {
             if ((Keyboard.Modifiers & ModifierKeys.Shift) == 0)
             {
-                Point doubleClickPoint = e.GetPosition(canvas);
+                Point doubleClickPoint = e.GetPosition(theGrid);
                 zoomAndPanControl.AnimatedSnapTo(doubleClickPoint);
             }
         }
