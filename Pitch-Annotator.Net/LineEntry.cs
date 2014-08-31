@@ -34,10 +34,10 @@ namespace PitchAnnotator
             try
             {
                 labelText = string.Format("Line ({0},{1}) - ({2},{3})",
-                        ((double)values[0]).ToString("F3"), ((double)values[2]).ToString("F3"),
-                        ((double)values[1]).ToString("F3"), ((double)values[3]).ToString("F3"));
+                        ((double)values[0]).ToString("F3"), ((double)values[1]).ToString("F3"),
+                        ((double)values[2]).ToString("F3"), ((double)values[3]).ToString("F3"));
             }
-            finally
+            catch
             {
                 labelText = "";
             }
@@ -97,13 +97,14 @@ namespace PitchAnnotator
 
 
             // Multibinding to update label
-            //LineLabelMultiBinding = new MultiBinding();
-            //LineLabelMultiBinding.Converter = new LineListItemConverter();
-            //LineLabelMultiBinding.Bindings.Add(new Binding("X1") { Source = this.line });
-            //LineLabelMultiBinding.Bindings.Add(new Binding("X2") { Source = this.line });
-            //LineLabelMultiBinding.Bindings.Add(new Binding("Y1") { Source = this.line });
-            //LineLabelMultiBinding.Bindings.Add(new Binding("Y2") { Source = this.line });
-            //this.SetBinding(ContentProperty, LineLabelMultiBinding);
+            LineLabelMultiBinding = new MultiBinding();
+            LineLabelMultiBinding.Converter = new LineListItemConverter();
+            LineLabelMultiBinding.Bindings.Add(new Binding("X1") { Source = this.line });
+            LineLabelMultiBinding.Bindings.Add(new Binding("Y1") { Source = this.line });
+            LineLabelMultiBinding.Bindings.Add(new Binding("X2") { Source = this.line });
+            LineLabelMultiBinding.Bindings.Add(new Binding("Y2") { Source = this.line });
+            this.SetBinding(ContentProperty, LineLabelMultiBinding);
+
 
 
             this.Background = Brushes.White;
