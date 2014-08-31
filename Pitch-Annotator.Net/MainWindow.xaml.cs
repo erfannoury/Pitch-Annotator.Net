@@ -245,7 +245,8 @@ namespace PitchAnnotator
                 currLineEntry.line.MouseUp += Line_MouseUp;
                 currLineEntry.line.MouseMove += Line_MouseMove;
                 canvas.Children.Add(currLineEntry.line);
-
+                lineEntries.Add(currLineEntry);
+                updateLayersListView(currLineEntry);
             }
             else if ((Keyboard.Modifiers & ModifierKeys.Shift) != 0 &&
                 (e.ChangedButton == MouseButton.Left ||
@@ -297,8 +298,8 @@ namespace PitchAnnotator
                 else if (mouseHandlingMode == MouseHandlingMode.LineDrawing)
                 {
                     // When line creation has finished, add the line to the lineEntries list
-                    lineEntries.Add(currLineEntry);
-                    updateLayersListView(currLineEntry);
+                    //lineEntries.Add(currLineEntry);
+                    //updateLayersListView(currLineEntry);
                 }
 
                 zoomAndPanControl.ReleaseMouseCapture();
@@ -798,6 +799,8 @@ namespace PitchAnnotator
             // then clear the lineEntries List containing all the annotated lineEntries
             lineEntries.Clear();
 
+            layersLists.Items.Clear();
+
             // if the currently selected image already has annotation file, add all the lineEntries to the proper lists
             if(CurrentImageEntry.HasAnnotation)
             {
@@ -873,8 +876,8 @@ namespace PitchAnnotator
                 foreach (var lineEnt in lineEntries)
                 {
                     csvwriter.WriteField<double>(lineEnt.line.X1);
-                    csvwriter.WriteField<double>(lineEnt.line.X2);
                     csvwriter.WriteField<double>(lineEnt.line.Y1);
+                    csvwriter.WriteField<double>(lineEnt.line.X2);
                     csvwriter.WriteField<double>(lineEnt.line.Y2);
                     csvwriter.NextRecord();
                 }
@@ -894,9 +897,9 @@ namespace PitchAnnotator
         private void updateLayersListView(LineEntry lineEntry)
         {
             layersLists.Items.Add(lineEntry);
-            layersLists.Items.SortDescriptions.Clear();
-            layersLists.Items.SortDescriptions.Add(new System.ComponentModel.SortDescription("Content", System.ComponentModel.ListSortDirection.Ascending));
-            layersLists.Items.Refresh();
+            //layersLists.Items.SortDescriptions.Clear();
+            //layersLists.Items.SortDescriptions.Add(new System.ComponentModel.SortDescription("Content", System.ComponentModel.ListSortDirection.Ascending));
+            //layersLists.Items.Refresh();
             //layersLists.SelectedItem = layersLists.Items.GetItemAt(layersLists.Items.Count - 1);
             layersLists.SelectedItem = lineEntry;
         }
