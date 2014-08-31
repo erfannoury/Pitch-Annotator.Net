@@ -348,8 +348,10 @@ namespace PitchAnnotator
                     // to zoom in on.
                     //
                     mouseHandlingMode = MouseHandlingMode.DragZooming;
-                    Point curContentMousePoint = e.GetPosition(canvas);
-                    InitDragZoomRect(origContentMouseDownPoint, curContentMousePoint);
+                    Point curContentMousePoint = e.GetPosition(theGrid);
+                    var marginalizedOrigContentMouseDownPoint = new Point(origContentMouseDownPoint.X + CanvasGridMargin, origContentMouseDownPoint.Y + CanvasGridMargin);
+                    //InitDragZoomRect(origContentMouseDownPoint, curContentMousePoint);
+                    InitDragZoomRect(marginalizedOrigContentMouseDownPoint, curContentMousePoint);
                 }
 
                 e.Handled = true;
@@ -360,8 +362,10 @@ namespace PitchAnnotator
                 // When in drag zooming mode continously update the position of the rectangle
                 // that the user is dragging out.
                 //
-                Point curContentMousePoint = e.GetPosition(canvas);
-                SetDragZoomRect(origContentMouseDownPoint, curContentMousePoint);
+                Point curContentMousePoint = e.GetPosition(theGrid);
+                var marginalizedOrigContentMouseDownPoint = new Point(origContentMouseDownPoint.X + CanvasGridMargin, origContentMouseDownPoint.Y + CanvasGridMargin);
+                //SetDragZoomRect(origContentMouseDownPoint, curContentMousePoint);
+                SetDragZoomRect(marginalizedOrigContentMouseDownPoint, curContentMousePoint);
 
                 e.Handled = true;
             }
