@@ -20,7 +20,8 @@ namespace PitchAnnotator
         private double ymin;
         private double xmax;
         private double ymax;
-
+        private double tE;
+        private double tL;
         public LineClipper(double w, double h)
         {
             this.xmin = 0;
@@ -51,12 +52,12 @@ namespace PitchAnnotator
             if (isApproxZero(dx) && isApproxZero(dy) && isPointInside(line.X1, line.Y1))
                 return;
 
-            Double tE = 0;
-            Double tL = 1;
-            if (clipT(xmin - line.X1, dx, tE, tL) &&
-                clipT(line.X1 - xmax, -dx, tE, tL) &&
-                clipT(ymin - line.Y1, dy, tE, tL) &&
-                clipT(line.Y1 - ymax, -dy, tE, tL))
+            tE = 0;
+            tL = 1;
+            if (clipT(xmin - line.X1, dx) &&
+                clipT(line.X1 - xmax, -dx) &&
+                clipT(ymin - line.Y1, dy) &&
+                clipT(line.Y1 - ymax, -dy))
             {
                 if(tL < 1)
                 {
@@ -72,7 +73,7 @@ namespace PitchAnnotator
 
         }
 
-        private bool clipT(double num, double denum, Double tE, Double tL)
+        private bool clipT(double num, double denum)
         {
             double t;
 

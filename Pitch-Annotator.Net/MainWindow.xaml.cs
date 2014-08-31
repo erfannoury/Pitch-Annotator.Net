@@ -29,6 +29,11 @@ namespace PitchAnnotator
     public partial class MainWindow : Window
     {
         /// <summary>
+        /// This LineClipper object is for clipping the lines annotated by user to be inside the bounds of image
+        /// </summary>
+        private LineClipper Clipper;
+
+        /// <summary>
         /// This additional margin allows panning beyond the image border
         /// </summary>
         static int CanvasGridMargin = 50;
@@ -787,6 +792,8 @@ namespace PitchAnnotator
             canvas.Background = new ImageBrush(im);
             canvas.Margin = new Thickness(CanvasGridMargin);
 
+            /// Update the LineClipper object so that when saving the output, lines be clipped to the bounds of the image
+            Clipper = new LineClipper(im.Width, im.Height);
         }
 
         /// <summary>
@@ -875,6 +882,8 @@ namespace PitchAnnotator
                 var csvwriter = new CsvWriter(streamwriter);
                 foreach (var lineEnt in lineEntries)
                 {
+                    if (Clipper != null)
+                        Clipper.Clip(lineEnt.line);
                     csvwriter.WriteField<double>(lineEnt.line.X1);
                     csvwriter.WriteField<double>(lineEnt.line.Y1);
                     csvwriter.WriteField<double>(lineEnt.line.X2);
@@ -917,6 +926,7 @@ namespace PitchAnnotator
                 canvas.Children.Remove(item.line);
                 lineEntries.Remove(item);
                 layersLists.Items.Remove(item);
+                
             }
         }
 
