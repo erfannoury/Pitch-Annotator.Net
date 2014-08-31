@@ -922,11 +922,12 @@ namespace PitchAnnotator
         {
             if(layersLists.SelectedItem != null)
             {
+                int idx = layersLists.SelectedIndex;
                 var item = layersLists.SelectedItem as LineEntry;
                 canvas.Children.Remove(item.line);
                 lineEntries.Remove(item);
                 layersLists.Items.Remove(item);
-                
+                layersLists.SelectedIndex = idx;
             }
         }
 
