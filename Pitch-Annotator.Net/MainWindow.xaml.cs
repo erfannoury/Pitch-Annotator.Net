@@ -826,8 +826,11 @@ namespace PitchAnnotator
                 }
                 catch (Exception e)
                 {
-                    Console.WriteLine("Exception occured when saving image {0}'s  output.", CurrentImageEntry.ImageName);
-                    Console.WriteLine("Exception message:\n{0}", e.Message);
+                    if (CurrentImageEntry != null)
+                    {
+                        Console.WriteLine("Exception occured when saving image {0}'s  output.", CurrentImageEntry.ImageName);
+                        Console.WriteLine("Exception message:\n{0}", e.Message);
+                    }
                 }
             }));
 
