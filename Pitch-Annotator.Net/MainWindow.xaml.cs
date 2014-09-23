@@ -188,6 +188,15 @@ namespace PitchAnnotator
             //helpTextWindow.Top = this.Top;
             //helpTextWindow.Owner = this;
             //helpTextWindow.Show();
+
+
+            inkcanvas.Background = new SolidColorBrush(Colors.Transparent);
+            inkcanvas.DefaultDrawingAttributes.Width = 50;
+            inkcanvas.DefaultDrawingAttributes.Height = 50;
+            Color brushColor = Colors.IndianRed;
+            brushColor.A = 128;
+            inkcanvas.DefaultDrawingAttributes.Color = brushColor;
+            
         }
 
         /// <summary>
@@ -1010,6 +1019,16 @@ namespace PitchAnnotator
                 }
 
             }
+        }
+
+        /// <summary>
+        /// This event is raised when user presses `B` or the `Brushing Mode` toggle button to switch to or back from brushing mode
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void ToggleBrushingMode_Executed(object sender, ExecutedRoutedEventArgs e)
+        {
+
         }
 
     }
