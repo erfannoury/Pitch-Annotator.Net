@@ -173,7 +173,7 @@
                 <ColumnDefinition Width="150" />
                 <ColumnDefinition Width="150"/>
                 <ColumnDefinition Width="80"/>
-                <ColumnDefinition Width="89*"/>
+                <ColumnDefinition Width="90"/>
                 <ColumnDefinition Width="469*"/>
                 <ColumnDefinition Width="80"/>
                 <!-- delete layer button-->
@@ -225,9 +225,16 @@
                 Content="Output saved!"
                 Visibility="Hidden" Margin="0.321,0,0.377,0"
                 />
+            <ToggleButton
+                Grid.Column="3"
+                Name="toggleBrushing"
+                Command="{StaticResource Commands.ToggleBrushingMode}"
+                >
+                Toggle Brushing
+            </ToggleButton>
             <Button
-				Grid.Column="4"
-				Command="{StaticResource Commands.DeleteLineLayer}" Grid.ColumnSpan="3" Margin="469.32,0,5.301,0"
+				Grid.Column="5"
+				Command="{StaticResource Commands.DeleteLineLayer}"
 				>
                 Delete Layer
             </Button>
