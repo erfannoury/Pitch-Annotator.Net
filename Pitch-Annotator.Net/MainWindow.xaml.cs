@@ -779,6 +779,9 @@ namespace PitchAnnotator
             canvas.Background = new ImageBrush(im);
             canvas.Margin = new Thickness(CanvasGridMargin);
 
+            inkcanvas.Height = im.Height;
+            inkcanvas.Width = im.Width;
+
             /// Update the LineClipper object so that when saving the output, lines be clipped to the bounds of the image
             Clipper = new LineClipper(im.Width, im.Height);
         }

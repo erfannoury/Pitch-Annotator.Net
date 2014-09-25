@@ -362,8 +362,9 @@
 						Background="White"
 						/>
                             <!-- The Ink canvas to brush over players-->
-                            <InkCanvas Name="inkcanvas" Height="Auto" Width="Auto">
-
+                            <InkCanvas 
+                                Name="inkcanvas" Height="0" Width="0"
+                            >
                             </InkCanvas>
                             <!--
 					This Canvas and Border are used as a very simple way to render a drag rectangle that the user
