@@ -191,8 +191,8 @@ namespace PitchAnnotator
 
             inkcanvas.Visibility = Visibility.Hidden;
             inkcanvas.Background = new SolidColorBrush(Colors.Transparent);
-            inkcanvas.DefaultDrawingAttributes.Width = 50;
-            inkcanvas.DefaultDrawingAttributes.Height = 50;
+            inkcanvas.DefaultDrawingAttributes.Width = 20;
+            inkcanvas.DefaultDrawingAttributes.Height = 20;
             Color brushColor = Colors.IndianRed;
             brushColor.A = 128;
             inkcanvas.DefaultDrawingAttributes.Color = brushColor;
