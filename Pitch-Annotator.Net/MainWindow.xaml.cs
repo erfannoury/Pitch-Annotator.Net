@@ -32,17 +32,17 @@ namespace PitchAnnotator
         /// <summary>
         /// A transparent red color used for the painter cursor on the inkcanvas
         /// </summary>
-        private SolidColorBrush transparentRed;
+        private readonly SolidColorBrush transparentRed;
 
         /// <summary>
         /// A transparent white color used for the eraser cursor on the inkcanvas
         /// </summary>
-        private SolidColorBrush transparentWhite;
+        private readonly SolidColorBrush transparentWhite;
 
         /// <summary>
         /// Default size for the canvas cursor size
         /// </summary>
-        private int CanvasCursorDefaultSize = 20;
+        private const int CanvasCursorDefaultSize = 20;
 
         /// <summary>
         /// This ellipse is used
