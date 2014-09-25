@@ -38,9 +38,27 @@ namespace PitchAnnotator
         }
 
         /// <summary>
+        /// A boolean showing whether image file has corresponding InkStrokeFile or not
+        /// </summary>
+        public bool HasInkStrokeFile
+        {
+            get { return File.Exists(this.InkStrokeFileAddress); }
+        }
+
+        /// <summary>
         /// Absolute path to the annotation file
         /// </summary>
         public string AnnotationAddress;
+
+        /// <summary>
+        /// Absolute path to the InkStrokeFile(.isf) file
+        /// </summary>
+        public string InkStrokeFileAddress;
+
+        /// <summary>
+        /// Absolute path to the bitmap output of the contents of the InkCanvas
+        /// </summary>
+        public string InkStrokeBitmap;
 
         /// <summary>
         /// Constructor for the image entry object. It is assumed that the provided address indeed points to an image file
@@ -54,6 +72,8 @@ namespace PitchAnnotator
                 Directory.CreateDirectory(annotationPath);
             }
             this.AnnotationAddress = Path.Combine(annotationPath, ImageName + ".csv");
+            this.InkStrokeFileAddress = Path.Combine(annotationPath, ImageName + ".isf");
+            this.InkStrokeBitmap = Path.Combine(annotationPath, ImageName + ".png");
 
         }
 
