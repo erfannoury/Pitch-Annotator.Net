@@ -7,6 +7,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Documents;
+using System.Windows.Ink;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
@@ -28,6 +29,11 @@ namespace PitchAnnotator
     /// </summary>
     public partial class MainWindow : Window
     {
+        /// <summary>
+        /// A boolean to show whether currently in the brushing mode, eraser is enabled or not
+        /// </summary>
+        private bool IsEraserMode = false;
+        
         /// <summary>
         /// This LineClipper object is for clipping the lines annotated by user to be inside the bounds of image
         /// </summary>
@@ -1028,7 +1034,7 @@ namespace PitchAnnotator
         }
 
         /// <summary>
-        /// This event is raised when user presses `B` or the `Brushing Mode` toggle button to switch to or back from brushing mode
+        /// This event is raised when user presses `B` or the `Toggle Brushing` toggle button to switch to or back from brushing mode
         /// </summary>
         private void ToggleBrushingMode_Executed(object sender, ExecutedRoutedEventArgs e)
         {
@@ -1037,12 +1043,53 @@ namespace PitchAnnotator
                 if ((bool) toggleBrushing.IsChecked)
                     toggleBrushing.IsChecked = false;
                 inkcanvas.Visibility = Visibility.Hidden;
+                IsEraserMode = false;
+                toggleEraser.IsChecked = false;
+                inkcanvas.EditingMode = InkCanvasEditingMode.Ink;
             }
             else
             {
                 if ((bool) !toggleBrushing.IsChecked)
                     toggleBrushing.IsChecked = true;
                 inkcanvas.Visibility = Visibility.Visible;
+            }
+        }
+        /// <summary>
+        /// Since setting binding to Width and Height subproperty of DefaultDrawingAttributes property of InkCanvas wasn't possible, instead we opt to
+        /// using the event to change the stroke tip's size
+        /// </summary>
+        private void BrushSlider_OnValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
+        {
+            if (inkcanvas != null)
+            {
+                inkcanvas.DefaultDrawingAttributes.Width = BrushSlider.Value;
+                inkcanvas.DefaultDrawingAttributes.Height = BrushSlider.Value;
+            }
+        }
+
+        /// <summary>
+        /// This event is raised when user presses `E` or the `Toggle Eraser` toggle button to switch to or back from erasing mode when in brushing mode
+        /// </summary>
+        private void ToggleEraserMode_Executed(object sender, ExecutedRoutedEventArgs e)
+        {
+            if ((bool) toggleBrushing.IsChecked)
+            {
+                if (!IsEraserMode)
+                {
+                    toggleEraser.IsChecked = true;
+                    inkcanvas.EditingMode = InkCanvasEditingMode.EraseByPoint;
+                    IsEraserMode = !IsEraserMode;
+                }
+                else
+                {
+                    toggleEraser.IsChecked = false;
+                    inkcanvas.EditingMode = InkCanvasEditingMode.Ink;
+                    IsEraserMode = !IsEraserMode;
+                }
+            }
+            else
+            {
+                toggleEraser.IsChecked = false;
             }
         }
     }
