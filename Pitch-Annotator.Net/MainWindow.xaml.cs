@@ -828,10 +828,13 @@ namespace PitchAnnotator
                 Thread.Sleep(1000);
                 try
                 {
-                    this.Dispatcher.Invoke(() =>
+                    if (this.IsVisible)
+                    {
+                        this.Dispatcher.Invoke(() =>
                             {
                                 outputsavedLbl.Visibility = System.Windows.Visibility.Hidden;
                             });
+                    }
                 }
                 catch (Exception e)
                 {
