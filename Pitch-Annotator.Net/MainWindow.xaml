@@ -30,6 +30,7 @@
         <RoutedCommand x:Key="Commands.MoveRightOnePixel" />
         <RoutedCommand x:Key="Commands.SaveOutput"/>
         <RoutedUICommand x:Key="Commands.ToggleBrushingMode"/>
+        <RoutedCommand x:Key="Commands.ToggleErasingMode"/>
         <!-- 
 		This converts from a scale value to a percentage value.
 		It is used to convert the value of 'ContentScale' to the percentage zoom level that is displayed in the UI.
@@ -98,6 +99,10 @@
             Key="B"
             Command="{StaticResource Commands.ToggleBrushingMode}"
             />
+        <KeyBinding
+            Key="E"
+            Command="{StaticResource Commands.ToggleErasingMode}"
+            />
     </Window.InputBindings>
 
     <Window.CommandBindings>
@@ -154,6 +159,11 @@
             Command="{StaticResource Commands.ToggleBrushingMode}"
             Executed="ToggleBrushingMode_Executed"
             />
+        <CommandBinding
+            Command="{StaticResource Commands.ToggleErasingMode}"
+            Executed="ToggleEraserMode_Executed"            
+            />
+
     </Window.CommandBindings>
 
     <Grid>
@@ -164,77 +174,80 @@
 		-->
         <Grid
 			Name="statBar" 
-			Height="35" 
-			Margin="0,0,0,0" 
+			Height="31" 
+			Margin="0,2,0,2" 
 			VerticalAlignment="Bottom" 
 			Background="WhiteSmoke"
 			>
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="150" />
-                <ColumnDefinition Width="150"/>
                 <ColumnDefinition Width="80"/>
                 <ColumnDefinition Width="90"/>
-                <ColumnDefinition Width="469*"/>
-                <ColumnDefinition Width="80"/>
-                <!-- delete layer button-->
-                <ColumnDefinition Width="5"/>
-                <!-- empty space -->
-                <ColumnDefinition Width="40" />
-                <!-- the fill button -->
-                <ColumnDefinition Width="5" />
-                <!-- spacer -->
-                <ColumnDefinition Width="40" />
-                <!-- the 100% button -->
-                <ColumnDefinition Width="5" />
-                <!-- spacer -->
-                <ColumnDefinition Width="25" />
-                <!-- the zoom percentage label -->
-                <ColumnDefinition Width="15" />
-                <!-- the % symbol -->
-                <ColumnDefinition Width="5" />
-                <!-- spacer -->
-                <ColumnDefinition Width="20" />
-                <!-- the zoom out button -->
-                <ColumnDefinition Width="5" />
-                <!-- spacer -->
-                <ColumnDefinition Width="120" />
-                <!-- the zoom slider -->
-                <ColumnDefinition Width="5" />
-                <!-- spacer -->
-                <ColumnDefinition Width="20" />
-                <!-- the zoom in button -->
-                <ColumnDefinition Width="10" />
-                <!-- spacer -->
-                <ColumnDefinition Width="Auto" />
-                <!-- resize grip -->
-                <!-- spacer -->
+                <ColumnDefinition Width="65"/>
+                <ColumnDefinition Width="120"/>
+                <ColumnDefinition Width="25"/>
+                <ColumnDefinition Width="75"/>
+                <ColumnDefinition Width="75"/>
+                <ColumnDefinition Width="40"/>
+                <ColumnDefinition Width="40"/>
+                <ColumnDefinition Width="20"/>
+                <ColumnDefinition Width="130"/>
+                <ColumnDefinition Width="20"/>
+                <ColumnDefinition Width="30"/>
+                <ColumnDefinition Width="20"/>
+                <ColumnDefinition Width="485*"/>
             </Grid.ColumnDefinitions>
 
-            <!-- This label will show information about the location of the first endpoint of the current line -->
-            <Label
-				Grid.Column="0"
-				Name="firstPointLbl" Margin="0,0,0.34,0"/>
-
-            <!-- This label will show information about the location of the second endpoint of the current line -->
-            <Label
-				Name="secondPointLbl" Grid.ColumnSpan="3" Margin="150,0,79.377,0"/>
             <!-- This label will show a message indicating the output has been saved -->
             <Label
-                Grid.Column="2"
+                Grid.Column="0"
                 Name="outputsavedLbl"
                 Content="Output saved!"
-                Visibility="Hidden" Margin="0.321,0,0.377,0"
+                Visibility="Hidden"
                 />
             <ToggleButton
-                Grid.Column="3"
+                Grid.Column="1"
                 Name="toggleBrushing"
                 Command="{StaticResource Commands.ToggleBrushingMode}"
                 >
                 Toggle Brushing
             </ToggleButton>
+            <Label
+                Grid.Column="2"
+                Name="Brushlbl"    
+                Width="Auto"
+                Height="Auto"
+                VerticalAlignment="Center"
+            >
+                Brush Size:
+            </Label>
+            <Slider
+                Grid.Column="3"
+                VerticalAlignment="Center"
+                Minimum="5"
+                Maximum="75"
+                TickFrequency="5"
+                SmallChange="1"
+                TickPlacement="TopLeft"
+                Name="BrushSlider"
+                Value="20"
+                ValueChanged="BrushSlider_OnValueChanged"
+            ></Slider>
+            <Label
+                Grid.Column="4"
+                VerticalAlignment="Center"
+                Content="{Binding ElementName=BrushSlider, Path=Value}"
+                >
+            </Label>
+            <ToggleButton
+                Grid.Column="5"
+                Name="toggleEraser"
+                Command="{StaticResource Commands.ToggleErasingMode}"
+            >
+                Toggle Eraser
+            </ToggleButton>
             <Button
-				Grid.Column="5"
-				Command="{StaticResource Commands.DeleteLineLayer}"
+				Grid.Column="6"
+				Command="{StaticResource Commands.DeleteLineLayer}" 
 				>
                 Delete Layer
             </Button>
@@ -243,8 +256,8 @@
 			The fill button.  Causes the content to be scaled so that it fits in the viewport.
 			-->
             <Button
-				Grid.Column="6"
-				Command="{StaticResource Commands.Fill}" Grid.ColumnSpan="2" Margin="5.133,0,0.15,0"
+				Grid.Column="7"
+				Command="{StaticResource Commands.Fill}"
 				>
                 Fill
             </Button>
@@ -252,8 +265,8 @@
 			The 100% button.  Causes the content to be scaled to 100 percent.
 			-->
             <Button
-				Grid.Column="9"
-				Command="{StaticResource Commands.OneHundredPercent}" Margin="0.416,0,0.434,0"
+				Grid.Column="8"
+				Command="{StaticResource Commands.OneHundredPercent}" 
 				>
                 100%
             </Button>
@@ -263,53 +276,47 @@
 			is while zooming in and out.
 			-->
             <TextBlock
-				Grid.Column="11"
+				Grid.Column="12"
 				VerticalAlignment="Center"
 				HorizontalAlignment="Right"
-				Text="{Binding ElementName=zoomAndPanControl, Path=ContentScale, Converter={StaticResource scaleToPercentConverter}}" Grid.ColumnSpan="2" Margin="0,11,11.622,9"
+				Text="{Binding ElementName=zoomAndPanControl, Path=ContentScale, Converter={StaticResource scaleToPercentConverter}}"
 				/>
 
             <TextBlock
-				Grid.Column="11"
+				Grid.Column="13"
 				VerticalAlignment="Center"
-				Text="%" Margin="25.133,11,5.056,9" Grid.ColumnSpan="3"
+				Text="%" 
 				/>
 
             <!-- Button to zoom out. -->
             <Button
-				Grid.Column="13"
-				Command="{StaticResource Commands.ZoomOut}" Grid.ColumnSpan="3" Margin="5.378,0,5.415,0"
+				Grid.Column="9"
+				Command="{StaticResource Commands.ZoomOut}" 
 				>
                 -
             </Button>
 
             <!-- Slider to change the current zoom level. -->
             <Slider
-				Grid.Column="15"
+				Grid.Column="10"
 				Minimum="10" 
 				LargeChange="20" 
 				TickFrequency="10" 
 				Maximum="200" 
 				SmallChange="10" 
 				TickPlacement="TopLeft"
-				Value="{Binding ElementName=zoomAndPanControl, Path=ContentScale, Converter={StaticResource scaleToPercentConverter}}" Grid.ColumnSpan="3" Margin="5.019,0,5.396,0"
+				Value="{Binding ElementName=zoomAndPanControl, Path=ContentScale, Converter={StaticResource scaleToPercentConverter}}"
 				/>
 
             <!--
 			Button to zoom in.
 			-->
             <Button
-				Grid.Column="17"
-				Command="{StaticResource Commands.ZoomIn}" Grid.ColumnSpan="2" Margin="5.038,0,0.32,0"
+				Grid.Column="11"
+				Command="{StaticResource Commands.ZoomIn}"
 				>
                 +
             </Button>
-
-            <!-- Stick a resize grip in the bottom right corner of the window. -->
-            <ResizeGrip
-				Grid.Column="19" Grid.ColumnSpan="2" Margin="9.68,0,0.49,0"
-				/>
-
         </Grid>
 
         <Grid 
