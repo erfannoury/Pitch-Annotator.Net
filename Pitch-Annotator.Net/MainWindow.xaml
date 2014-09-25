@@ -371,6 +371,9 @@
                             <!-- The Ink canvas to brush over players-->
                             <InkCanvas 
                                 Name="inkcanvas" Height="0" Width="0"
+                                MouseEnter="Inkcanvas_OnMouseEnter"
+                                MouseLeave="Inkcanvas_OnMouseLeave"
+                                MouseMove="Inkcanvas_OnMouseMove"
                             >
                             </InkCanvas>
                             <!--
