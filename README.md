@@ -6,32 +6,38 @@ An application for pitch annotation implemented in WPF.
 
 Keyboard shortcuts
 ==================
-###To Move lines:
+### To Move lines:
 Move mouse over an endpoint, hold `Alt` and drag it to move endpoint to the desired location.
 
 Also you can move a selected endpoint using keyboard arrow keys
 
 (**_Note_**: focus shouldn't be on any of the list views. To change the focus, press `TAB`).
 
-###To delete a line:
+### To delete a line:
 Select a line from the list of lines and press `D`, `Delete`, or delete using the `Delete Layer` button.
 
-###To draw a new line:
+### To draw a new line:
 Press and hold `Ctrl` to draw a new line
 
 
-###To save output (annotated lines):
+### To save output (annotated lines):
 Press `Ctrl+S`.
 
 When switching images, output is automatically saved.
 
 Also when exiting the program, output is automatically saved.
 
-###To Zoom to fill:
+### To Zoom to fill:
 Press `F`
 
-###To Zoom to 100%:
+### To Zoom to 100%:
 Press `P`
+
+### Toggle Brushing mode
+To enable/disable brusing mode, press `B` or `Toggle Brushing` button at the bottom of the window.
+
+### Toggle Erasing mode
+To enable/disable erasing mode when in brushing mode, press `E` or `Toggle Eraser` button at the bottom of the window.
 
 Acknowledgment
 ==============
@@ -40,7 +46,4 @@ ZoomAndPanControl component from this [article](http://www.codeproject.com/Artic
 
 Releases
 ========
-You can find the latest releases (and also past releases) in the [Releases Page](https://github.com/erfannoury/Pitch-Annotator.Net/releases/tag/v0.2.1).
-
-
-
+You can find the latest releases (and also past releases) in the [Releases Page](https://github.com/erfannoury/Pitch-Annotator.Net/releases).
