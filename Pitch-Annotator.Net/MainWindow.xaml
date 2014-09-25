@@ -30,7 +30,7 @@
         <RoutedCommand x:Key="Commands.MoveRightOnePixel" />
         <RoutedCommand x:Key="Commands.SaveOutput"/>
         <RoutedUICommand x:Key="Commands.ToggleBrushingMode"/>
-        <RoutedCommand x:Key="Commands.ToggleErasingMode"/>
+        <RoutedUICommand x:Key="Commands.ToggleErasingMode"/>
         <!-- 
 		This converts from a scale value to a percentage value.
 		It is used to convert the value of 'ContentScale' to the percentage zoom level that is displayed in the UI.
