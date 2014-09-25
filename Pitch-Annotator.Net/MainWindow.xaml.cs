@@ -30,6 +30,26 @@ namespace PitchAnnotator
     public partial class MainWindow : Window
     {
         /// <summary>
+        /// A transparent red color used for the painter cursor on the inkcanvas
+        /// </summary>
+        private SolidColorBrush transparentRed;
+
+        /// <summary>
+        /// A transparent white color used for the eraser cursor on the inkcanvas
+        /// </summary>
+        private SolidColorBrush transparentWhite;
+
+        /// <summary>
+        /// Default size for the canvas cursor size
+        /// </summary>
+        private int CanvasCursorDefaultSize = 20;
+
+        /// <summary>
+        /// This ellipse is used
+        /// </summary>
+        private Ellipse inkCanvasEllipse;
+
+        /// <summary>
         /// A boolean to show whether currently in the brushing mode, eraser is enabled or not
         /// </summary>
         private bool IsEraserMode = false;
@@ -174,6 +194,12 @@ namespace PitchAnnotator
         public MainWindow(string imFolder, string annotFolder)
         {
             InitializeComponent();
+
+            transparentRed = new SolidColorBrush(Colors.IndianRed);
+            transparentRed.Opacity = 0.5;
+            transparentWhite = new SolidColorBrush(Colors.White);
+            transparentWhite.Opacity = 0.5;
+
             lineEntries = new List<LineEntry>();
             imageEntries = new List<ImageEntry>();
             CurrentImageEntry = null;
@@ -195,14 +221,16 @@ namespace PitchAnnotator
             //helpTextWindow.Owner = this;
             //helpTextWindow.Show();
 
+            inkCanvasEllipse = new Ellipse() {Width = CanvasCursorDefaultSize, Height = CanvasCursorDefaultSize, Fill = transparentRed, Visibility = Visibility.Hidden};
             inkcanvas.Visibility = Visibility.Hidden;
             inkcanvas.Background = new SolidColorBrush(Colors.Transparent);
-            inkcanvas.DefaultDrawingAttributes.Width = 20;
-            inkcanvas.DefaultDrawingAttributes.Height = 20;
-            Color brushColor = Colors.IndianRed;
-            brushColor.A = 128;
-            inkcanvas.DefaultDrawingAttributes.Color = brushColor;
-            
+            inkcanvas.DefaultDrawingAttributes.Width = CanvasCursorDefaultSize;
+            inkcanvas.DefaultDrawingAttributes.Height = CanvasCursorDefaultSize;
+            inkcanvas.DefaultDrawingAttributes.Color = Colors.IndianRed;
+            inkcanvas.DefaultDrawingAttributes.IsHighlighter = true;
+            inkcanvas.UseCustomCursor = true;
+            inkcanvas.Children.Add(inkCanvasEllipse);
+
         }
 
         /// <summary>
@@ -917,6 +945,11 @@ namespace PitchAnnotator
                     pngEncoder.Save(fs);
                 }
             }
+            else if (inkcanvas.Strokes.Count == 0)
+            {
+                File.Delete(CurrentImageEntry.InkStrokeFileAddress);
+                File.Delete(CurrentImageEntry.InkStrokeBitmap);
+            }
 
             if (lineEntries.Count == 0)
             {
@@ -1089,6 +1122,7 @@ namespace PitchAnnotator
                 IsEraserMode = false;
                 toggleEraser.IsChecked = false;
                 inkcanvas.EditingMode = InkCanvasEditingMode.Ink;
+                inkCanvasEllipse.Fill = transparentRed;
             }
             else
             {
@@ -1105,8 +1139,11 @@ namespace PitchAnnotator
         {
             if (inkcanvas != null)
             {
-                inkcanvas.DefaultDrawingAttributes.Width = BrushSlider.Value;
-                inkcanvas.DefaultDrawingAttributes.Height = BrushSlider.Value;
+                var val = BrushSlider.Value;
+                inkcanvas.DefaultDrawingAttributes.Width = val;
+                inkcanvas.DefaultDrawingAttributes.Height = val;
+                inkCanvasEllipse.Height = val;
+                inkCanvasEllipse.Width = val;
             }
         }
 
@@ -1121,6 +1158,8 @@ namespace PitchAnnotator
                 {
                     toggleEraser.IsChecked = true;
                     inkcanvas.EditingMode = InkCanvasEditingMode.EraseByPoint;
+                    inkCanvasEllipse.Fill = transparentWhite;
+
                     IsEraserMode = !IsEraserMode;
                 }
                 else
@@ -1128,12 +1167,47 @@ namespace PitchAnnotator
                     toggleEraser.IsChecked = false;
                     inkcanvas.EditingMode = InkCanvasEditingMode.Ink;
                     IsEraserMode = !IsEraserMode;
+                    inkCanvasEllipse.Fill = transparentRed;
                 }
             }
             else
             {
                 toggleEraser.IsChecked = false;
             }
+        }
+
+        /// <summary>
+        /// This event is raised when mouse cursor enters InkCanvas. This event is used to hide the mouse cursor and instead 
+        /// display a circle to better show the size of the stroke drawing tip.
+        /// </summary>
+        private void Inkcanvas_OnMouseEnter(object sender, MouseEventArgs e)
+        {
+            Mouse.SetCursor(Cursors.None);
+            var position = e.GetPosition(inkcanvas);
+            var radius = inkCanvasEllipse.Height/2;
+            inkCanvasEllipse.Margin = new Thickness(position.X - radius, position.Y - radius, 0, 0);
+            inkCanvasEllipse.Visibility = Visibility.Visible;
+        }
+
+        /// <summary>
+        /// This event is raised when mouse cursor leaves the inkcanvas. This event is used to hide the cursor as the stroke
+        /// drawing tip and display the default mouse cursor.
+        /// </summary>
+        private void Inkcanvas_OnMouseLeave(object sender, MouseEventArgs e)
+        {
+            Mouse.SetCursor(Cursors.Arrow);
+            inkCanvasEllipse.Visibility = Visibility.Hidden;
+        }
+
+        /// <summary>
+        /// This event is raised when mouse moves inside the InkCanvas. It is used for updating the location of the circle
+        /// which is used instead of the mouse cursor to display the stroke drawing tip.
+        /// </summary>
+        private void Inkcanvas_OnMouseMove(object sender, MouseEventArgs e)
+        {
+            var position = e.GetPosition(inkcanvas);
+            var radius = inkCanvasEllipse.Height/2;
+            inkCanvasEllipse.Margin = new Thickness(position.X - radius, position.Y - radius, 0, 0);
         }
     }
 }
