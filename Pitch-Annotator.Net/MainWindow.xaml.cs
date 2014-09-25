@@ -763,6 +763,7 @@ namespace PitchAnnotator
                 CurrentImageEntry = imageEntries.Find(a => a.ImageName == imName);
                 DisplayImageAsCanvasBackground();
                 DisplayNewAnnotation();
+                DisplayInkCanvas();
             }
             if (LastSelectedImageItem != null)
             {
@@ -772,6 +773,23 @@ namespace PitchAnnotator
             }
             LastSelectedImageItem = imagesList.SelectedItem;
 
+        }
+
+        /// <summary>
+        /// If current image entry had InkStrokeFile saved before, it will load the strokes file and insert those strokes inside the InkCanvas
+        /// </summary>
+        private void DisplayInkCanvas()
+        {
+            inkcanvas.Strokes.Clear();
+            if (CurrentImageEntry.HasInkStrokeFile)
+            {
+                using (FileStream fs = new FileStream(CurrentImageEntry.InkStrokeFileAddress, FileMode.Open, FileAccess.Read))
+                {
+                    StrokeCollection strokes = new StrokeCollection(fs);
+                    inkcanvas.Strokes = strokes;
+                    fs.Close();
+                }
+            }
         }
 
         /// <summary>
@@ -880,6 +898,31 @@ namespace PitchAnnotator
                 File.Delete(CurrentImageEntry.AnnotationAddress);
                 return false;
             }
+
+            // Save stroke output if there is at least one
+            if (inkcanvas.Strokes.Count > 0)
+            {
+                // Save the InkStrokeFile
+                using (
+                    var fs = new FileStream(CurrentImageEntry.InkStrokeFileAddress, FileMode.Create, FileAccess.Write)
+                    )
+                {
+                    inkcanvas.Strokes.Save(fs);
+                    fs.Close();
+                }
+
+                // Save the InkStroke as bitmap file
+                var leftMargin = int.Parse(inkcanvas.Margin.Left.ToString());
+                var rtBitmap = new RenderTargetBitmap((int)inkcanvas.ActualWidth, (int)inkcanvas.ActualHeight, 0,0,PixelFormats.Default);
+                rtBitmap.Render(inkcanvas);
+                var pngEncoder = new PngBitmapEncoder();
+                pngEncoder.Frames.Add(BitmapFrame.Create(rtBitmap));
+                using (var fs = new FileStream(CurrentImageEntry.InkStrokeBitmap, FileMode.Create, FileAccess.Write))
+                {
+                    pngEncoder.Save(fs);
+                }
+            }
+            
 
             return true;
         }
