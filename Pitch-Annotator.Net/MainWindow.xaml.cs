@@ -893,11 +893,6 @@ namespace PitchAnnotator
                     csvwriter.NextRecord();
                 }
             }
-            if (lineEntries.Count == 0)
-            {
-                File.Delete(CurrentImageEntry.AnnotationAddress);
-                return false;
-            }
 
             // Save stroke output if there is at least one
             if (inkcanvas.Strokes.Count > 0)
@@ -922,7 +917,12 @@ namespace PitchAnnotator
                     pngEncoder.Save(fs);
                 }
             }
-            
+
+            if (lineEntries.Count == 0)
+            {
+                File.Delete(CurrentImageEntry.AnnotationAddress);
+                return false;
+            }
 
             return true;
         }
