@@ -189,7 +189,7 @@ namespace PitchAnnotator
             //helpTextWindow.Owner = this;
             //helpTextWindow.Show();
 
-
+            inkcanvas.Visibility = Visibility.Hidden;
             inkcanvas.Background = new SolidColorBrush(Colors.Transparent);
             inkcanvas.DefaultDrawingAttributes.Width = 50;
             inkcanvas.DefaultDrawingAttributes.Height = 50;
@@ -1027,12 +1027,20 @@ namespace PitchAnnotator
         /// <summary>
         /// This event is raised when user presses `B` or the `Brushing Mode` toggle button to switch to or back from brushing mode
         /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
         private void ToggleBrushingMode_Executed(object sender, ExecutedRoutedEventArgs e)
         {
-
+            if (inkcanvas.IsVisible == true)
+            {
+                if ((bool) toggleBrushing.IsChecked)
+                    toggleBrushing.IsChecked = false;
+                inkcanvas.Visibility = Visibility.Hidden;
+            }
+            else
+            {
+                if ((bool) !toggleBrushing.IsChecked)
+                    toggleBrushing.IsChecked = true;
+                inkcanvas.Visibility = Visibility.Visible;
+            }
         }
-
     }
 }
