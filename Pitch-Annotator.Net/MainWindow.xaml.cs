@@ -1231,7 +1231,7 @@ namespace PitchAnnotator
         /// </summary>
         private void UndoBrushing_OnExecuted(object sender, ExecutedRoutedEventArgs e)
         {
-            if (inkcanvas.Strokes.Count > 0)
+            if (inkcanvas.IsVisible && inkcanvas.Strokes.Count > 0)
             {
                 inkcanvas.Strokes.RemoveAt(inkcanvas.Strokes.Count - 1);
             }
