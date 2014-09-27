@@ -39,6 +39,14 @@ To enable/disable brusing mode, press `B` or `Toggle Brushing` button at the bot
 ### Toggle Erasing mode
 To enable/disable erasing mode when in brushing mode, press `E` or `Toggle Eraser` button at the bottom of the window.
 
+### Undo Stroke Brush
+To undo stroke brushing, press `U` or `Ctrl+Z`.
+
+### Change Brush Size
+Press `[` to decrease the size of the brush tip.
+
+Press `]` to increase the size of the brush tip.
+
 Acknowledgment
 ==============
 ZoomAndPanControl component from this [article](http://www.codeproject.com/Articles/85603/A-WPF-custom-control-for-zooming-and-panning) on CoderProject has been used  for zooming and panning functionality.
