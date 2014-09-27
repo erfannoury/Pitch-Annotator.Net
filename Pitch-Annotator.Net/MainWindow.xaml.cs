@@ -1209,5 +1209,21 @@ namespace PitchAnnotator
             var radius = inkCanvasEllipse.Height/2;
             inkCanvasEllipse.Margin = new Thickness(position.X - radius, position.Y - radius, 0, 0);
         }
+
+        /// <summary>
+        /// This is the event binding for the `]` key, when pressed, brush size will increase.
+        /// </summary>
+        private void IncreaseBrushSize_OnExecuted(object sender, ExecutedRoutedEventArgs e)
+        {
+            BrushSlider.Value += 1;
+        }
+
+        /// <summary>
+        /// This is the event binding for the `[` key, when pressed, brush size will decrease.
+        /// </summary>
+        private void DecreaseBrushSize_OnExecuted(object sender, ExecutedRoutedEventArgs e)
+        {
+            BrushSlider.Value -= 1;
+        }
     }
 }
