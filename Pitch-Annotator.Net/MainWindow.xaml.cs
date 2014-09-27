@@ -1225,5 +1225,16 @@ namespace PitchAnnotator
         {
             BrushSlider.Value -= 1;
         }
+
+        /// <summary>
+        /// This event is for undoing what user has drawn in the brushing canvas
+        /// </summary>
+        private void UndoBrushing_OnExecuted(object sender, ExecutedRoutedEventArgs e)
+        {
+            if (inkcanvas.Strokes.Count > 0)
+            {
+                inkcanvas.Strokes.RemoveAt(inkcanvas.Strokes.Count - 1);
+            }
+        }
     }
 }

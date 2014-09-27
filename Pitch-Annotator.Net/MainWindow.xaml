@@ -33,6 +33,7 @@
         <RoutedUICommand x:Key="Commands.ToggleErasingMode"/>
         <RoutedCommand x:Key="Commands.IncreaseBrushSize"/>
         <RoutedCommand x:Key="Commands.DecreaseBrushSize"/>
+        <RoutedCommand x:Key="Commands.UndoBrush"/>
         <!-- 
 		This converts from a scale value to a percentage value.
 		It is used to convert the value of 'ContentScale' to the percentage zoom level that is displayed in the UI.
@@ -113,6 +114,15 @@
             Key="OemCloseBrackets"
             Command="{StaticResource Commands.IncreaseBrushSize}"
             />
+        <KeyBinding
+            Key="U"
+            Command="{StaticResource Commands.UndoBrush}"
+            />
+        <KeyBinding
+            Key="Z"
+            Modifiers="Control"
+            Command="{StaticResource Commands.UndoBrush}"
+            />
     </Window.InputBindings>
 
     <Window.CommandBindings>
@@ -180,6 +190,10 @@
         <CommandBinding
             Command="{StaticResource Commands.DecreaseBrushSize}"
             Executed="DecreaseBrushSize_OnExecuted"
+            />
+        <CommandBinding
+            Command="{StaticResource Commands.UndoBrush}"
+            Executed="UndoBrushing_OnExecuted"
             />
     </Window.CommandBindings>
 
