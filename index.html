@@ -10,10 +10,12 @@
     <title>PitchAnnotator.Net</title>
 
     <!-- Bootstrap core CSS -->
-    <link href="css/bootstrap.min.css" rel="stylesheet">
-
+    <link href="http://erfannoury.github.io/Pitch-Annotator.Net/css/bootstrap.min.css" rel="stylesheet">
     <!-- Custom styles for this template -->
-    <link href="css/carousel.css" rel="stylesheet">
+    <link href="http://erfannoury.github.io/Pitch-Annotator.Net/css/carousel.css" rel="stylesheet">
+    <!-- Lightbox CSS -->
+    <link href="http://erfannoury.github.io/Pitch-Annotator.Net/css/ekko-lightbox.min.css" rel="stylesheet">
+
   </head>
 <!-- NAVBAR
 ================================================== -->
@@ -51,7 +53,7 @@
     <div id="myCarousel" class="carousel slide" data-ride="carousel">
       <div class="carousel-inner" role="listbox">
         <div class="item active">
-          <img src="data:image/gif;base64,R0lGODlhAQABAIAAAHd3dwAAACH5BAAAAAAALAAAAAABAAEAAAICRAEAOw==" alt="First slide">
+          <img src="http://erfannoury.github.io/Pitch-Annotator.Net/img/stadium.jpg" alt="Stadium">
           <div class="container">
             <div class="carousel-caption">
               <h1>PitchAnnotator.Net</h1>
@@ -80,11 +82,14 @@
       <div class="row featurette">
         <div class="col-md-7">
           <h2 class="featurette-heading">Annotating Lines</h2>
-          <p class="lead">You can annotate straight lines. Up to this point, we only wanted to annotate straight lines. So only annotations of straight lines is implemented.
-          However, new features can be added easily. Application can be extended by adding support for annotations of curved lines.</p>
+          <p class="lead">You can easily annotate lines and export them for later use. For now only annotating of straight lines is implemented. This is due to
+              the initial requirements of the project. We only needed straight lines. Nonetheless, new features can be added easily. Application can be extended by adding
+              support for annotating of curved lines.</p>
         </div>
         <div class="col-md-5">
-          <img class="featurette-image img-responsive" data-src="holder.js/500x500/auto" alt="Generic placeholder image">
+            <a href="http://erfannoury.github.io/Pitch-Annotator.Net/img/annotating-lines.png" data-toggle="lightbox" data-title="Annotating Lines">
+                <img class="featurette-image img-responsive" src="http://erfannoury.github.io/Pitch-Annotator.Net/img/annotating-lines-thumb.png" alt="Annotating Lines Thumbnail Image">
+            </a>
         </div>
       </div>
 
@@ -92,12 +97,16 @@
 
       <div class="row featurette">
         <div class="col-md-5">
-          <img class="featurette-image img-responsive" data-src="holder.js/500x500/auto" alt="Generic placeholder image">
+            <a href="http://erfannoury.github.io/Pitch-Annotator.Net/img/player-segment.png" data-toggle="lightbox" data-title="Annotating Segments">
+                <img class="featurette-image img-responsive" src="http://erfannoury.github.io/Pitch-Annotator.Net/img/player-segment-thumb.png" alt="Player Segments Thumbnail Image">
+            </a>
         </div>
         <div class="col-md-7">
           <h2 class="featurette-heading">Player Segments</h2>
-          <p class="lead">Also you can brush subjects of interest. For our research purpose, we wanted to annotate player segments, so we used means of brushing over
-          players to annotate them. As can be seen in the picture below, a tranparent red brush overlays player segments.</p>
+          <p class="lead">Also you can brush over subjects of interest. For our research purpose, we wanted to annotate player segments, so we used means of brushing over
+          players to annotate them. As can be seen in the picture, a tranparent red brush overlays player segments. As user brushes over segments of interest,
+           its output is saved in a format that can later be edited. So this process isn't a one-time-only kind of process.
+           Ability to label each annotated segment is in the future feature list. </p>
         </div>
       </div>
 
@@ -106,10 +115,14 @@
       <div class="row featurette">
         <div class="col-md-7">
           <h2 class="featurette-heading">User Friendly Interface</span></h2>
-          <p class="lead">And below is another picture of the program where you can see line annotations and also player segment annotations.</p>
+          <p class="lead">This application has a very responsive and user friendly interface. This interface has been tested constantly while
+          adding new features. So it makes the process of annotating comfortable and fun for the user. Just like other usefull applications,
+          this application has lots of keyboard shortcuts. So you don't have to click on any button, just move the mouse cursor :)</p>
         </div>
         <div class="col-md-5">
-          <img class="featurette-image img-responsive" data-src="holder.js/500x500/auto" alt="Generic placeholder image">
+            <a href="http://erfannoury.github.io/Pitch-Annotator.Net/img/ufi.png" data-toggle="lightbox" data-title="Friendly User Interface">
+                <img class="featurette-image img-responsive" src="http://erfannoury.github.io/Pitch-Annotator.Net/img/ufi-thumb.png" alt="Friendly User Interface Thumbnail Image">
+            </a>
         </div>
       </div>
 
@@ -129,9 +142,34 @@
     ================================================== -->
     <!-- Placed at the end of the document so the pages load faster -->
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
-    <script src="../../dist/js/bootstrap.min.js"></script>
-    <script src="../../assets/js/docs.min.js"></script>
+    <!-- Lighbox JS -->
+    <script src="http://erfannoury.github.io/Pitch-Annotator.Net/js/ekko-lightbox.min.js"></script>
+    <script type="text/javascript">
+			$(document).ready(function ($) {
+
+				// delegate calls to data-toggle="lightbox"
+				$(document).delegate('*[data-toggle="lightbox"]', 'click', function(event) {
+					event.preventDefault();
+					return $(this).ekkoLightbox({
+						onShown: function() {
+							if (window.console) {
+								return console.log('Checking our the events huh?');
+							}
+						}
+					});
+				});
+
+				//Programatically call
+				$('#open-image').click(function (e) {
+					e.preventDefault();
+					$(this).ekkoLightbox();
+				});
+		    });
+	</script>
+
+    <script src="http://erfannoury.github.io/Pitch-Annotator.Net/js/bootstrap.min.js"></script>
     <!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
-    <script src="../../assets/js/ie10-viewport-bug-workaround.js"></script>
+    <script src="http://erfannoury.github.io/Pitch-Annotator.Net/js/ie10-viewport-bug-workaround.js"></script>
+
   </body>
 </html>
